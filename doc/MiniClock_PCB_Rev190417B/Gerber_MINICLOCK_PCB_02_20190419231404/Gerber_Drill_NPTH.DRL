@@ -1,0 +1,15 @@
+;Layer: Drill NPTH
+;EasyEDA v5.9.42, Fri, 19 Apr 2019 15:14:02 GMT
+;1b50a63325eb494884fe414bfed8a826
+;Gerber Generator version 0.2
+M48
+INCH,LZ,00.0000
+;Holesize 1 = 0.024 INCH
+T01C0.024
+%
+G05
+G90
+T01
+X+001667Y+003163
+X+001667Y+004736
+M30

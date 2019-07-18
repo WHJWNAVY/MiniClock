@@ -1,0 +1,228 @@
+C51 COMPILER V9.59.0.0   CHINA_NONLI                                                       05/06/2019 23:08:41 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE CHINA_NONLI
+OBJECT MODULE PLACED IN .\Objects\china_nonli.obj
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE src\china_nonli.c OMF2 OPTIMIZE(8,SPEED) BROWSE INCDIR(.\src) DEBUG PRINT(.
+                    -\Listings\china_nonli.lst) TABS(2) OBJECT(.\Objects\china_nonli.obj)
+
+line level    source
+
+   1          #include "china_nonli.h"
+   2          
+   3          uint32 code LUNAR_CALENDAR_TABLE[/*199*/] =
+   4          {
+   5              #if 0
+                  0x04AE53, 0x0A5748, 0x5526BD, 0x0D2650, 0x0D9544, 0x46AAB9, 0x056A4D, 0x09AD42, 0x24AEB6, 0x04AE4A, /*
+             -1901-1910*/
+                  0x6A4DBE, 0x0A4D52, 0x0D2546, 0x5D52BA, 0x0B544E, 0x0D6A43, 0x296D37, 0x095B4B, 0x749BC1, 0x049754, /*
+             -1911-1920*/
+                  0x0A4B48, 0x5B25BC, 0x06A550, 0x06D445, 0x4ADAB8, 0x02B64D, 0x095742, 0x2497B7, 0x04974A, 0x664B3E, /*
+             -1921-1930*/
+                  0x0D4A51, 0x0EA546, 0x56D4BA, 0x05AD4E, 0x02B644, 0x393738, 0x092E4B, 0x7C96BF, 0x0C9553, 0x0D4A48, /*
+             -1931-1940*/
+                  0x6DA53B, 0x0B554F, 0x056A45, 0x4AADB9, 0x025D4D, 0x092D42, 0x2C95B6, 0x0A954A, 0x7B4ABD, 0x06CA51, /*
+             -1941-1950*/
+                  0x0B5546, 0x555ABB, 0x04DA4E, 0x0A5B43, 0x352BB8, 0x052B4C, 0x8A953F, 0x0E9552, 0x06AA48, 0x6AD53C, /*
+             -1951-1960*/
+                  0x0AB54F, 0x04B645, 0x4A5739, 0x0A574D, 0x052642, 0x3E9335, 0x0D9549, 0x75AABE, 0x056A51, 0x096D46, /*
+             -1961-1970*/
+                  0x54AEBB, 0x04AD4F, 0x0A4D43, 0x4D26B7, 0x0D254B, 0x8D52BF, 0x0B5452, 0x0B6A47, 0x696D3C, 0x095B50, /*
+             -1971-1980*/
+                  0x049B45, 0x4A4BB9, 0x0A4B4D, 0xAB25C2, 0x06A554, 0x06D449, 0x6ADA3D, 0x0AB651, 0x093746, 0x5497BB, /*
+             -1981-1990*/
+                  0x04974F, 0x064B44, 0x36A537, 0x0EA54A, 0x86B2BF, 0x05AC53, 0x0AB647, 0x5936BC, 0x092E50, 0x0C9645, /*
+             -1991-2000*/
+                  #else
+  17              /*0x04974F, 0x064B44, 0x36A537, 0x0EA54A, 0x86B2BF, 0x05AC53, 0x0AB647, 0x5936BC, 0x092E50,*/0x0C9645,
+             - /*1991-2000*/
+  18              #endif
+  19              0x4D4AB8, 0x0D4A4C, 0x0DA541, 0x25AAB6, 0x056A49, 0x7AADBD, 0x025D52, 0x092D47, 0x5C95BA, 0x0A954E, /*
+             -2001-2010*/
+  20              0x0B4A43, 0x4B5537, 0x0AD54A, 0x955ABF, 0x04BA53, 0x0A5B48, 0x652BBC, 0x052B50, 0x0A9345, 0x474AB9, /*
+             -2011-2020*/
+  21              0x06AA4C, 0x0AD541, 0x24DAB6, 0x04B64A, 0x69573D, 0x0A4E51, 0x0D2646, 0x5E933A, 0x0D534D, 0x05AA43, /*
+             -2021-2030*/
+  22              0x36B537, 0x096D4B, 0xB4AEBF, 0x04AD53, 0x0A4D48, 0x6D25BC, 0x0D254F, 0x0D5244, 0x5DAA38, 0x0B5A4C, /*
+             -2031-2040*/
+  23              0x056D41, 0x24ADB6, 0x049B4A, 0x7A4BBE, 0x0A4B51, 0x0AA546, 0x5B52BA, 0x06D24E, 0x0ADA42, 0x355B37, /*
+             -2041-2050*/
+  24              0x09374B, 0x8497C1, 0x049753, 0x064B48, 0x66A53C, 0x0EA54F, 0x06B244, 0x4AB638, 0x0AAE4C, 0x092E42, /*
+             -2051-2060*/
+  25              0x3C9735, 0x0C9649, 0x7D4ABD, 0x0D4A51, 0x0DA545, 0x55AABA, 0x056A4E, 0x0A6D43, 0x452EB7, 0x052D4B, /*
+             -2061-2070*/
+  26              0x8A95BF, 0x0A9553, 0x0B4A47, 0x6B553B, 0x0AD54F, 0x055A45, 0x4A5D38, 0x0A5B4C, 0x052B42, 0x3A93B6, /*
+             -2071-2080*/
+  27              0x069349, 0x7729BD, 0x06AA51, 0x0AD546, 0x54DABA, 0x04B64E, 0x0A5743, 0x452738, 0x0D264A, 0x8E933E, /*
+             -2081-2090*/
+  28              0x0D5252, 0x0DAA47, 0x66B53B, 0x056D4F, 0x04AE45, 0x4A4EB9, 0x0A4D4C, 0x0D1541, 0x2D92B5  /*2091-2099*
+             -/
+  29          };
+  30          
+  31          uint code LUNAR_MONTH_ADD[12] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
+  32          
+  33          /*****************************************************************************
+C51 COMPILER V9.59.0.0   CHINA_NONLI                                                       05/06/2019 23:08:41 PAGE 2   
+
+  34           函 数 名  : china_nonli_get
+  35           功能描述  : 根据输入的RTC时间获取农历时间
+  36           输入参数  : tm         当前RTC时间
+  37           输出参数  : nonli      当前农历时间
+  38           返 回 值  : 成功-RTN_OK, 失败-RTN_ERR
+  39          *****************************************************************************/
+  40          uchar china_nonli_get(rtc_time_t* tm, china_nonli_t* nonli)
+  41          {
+  42   1          int32 xdata year = 0;
+  43   1          int32 xdata month = 0;
+  44   1          int32 xdata day = 0;
+  45   1          int32 xdata spring_ny = 0;
+  46   1          int32 xdata sun_ny = 0;
+  47   1          int32 xdata stday_cnt = 0;
+  48   1          int32 xdata index = 0;
+  49   1          int32 xdata flag = 0;
+  50   1          uint32 xdata noli_day = 0;
+  51   1      
+  52   1          if((tm  == NULL) || (nonli == NULL))
+  53   1          {
+  54   2              return RTN_ERR;
+  55   2          }
+  56   1      
+  57   1          year = ((tm->year > 99) ? 99 : tm->year);//0-99
+  58   1          month = ((tm->month > 12) ? 12 : ((tm->month < 1) ? 1 : tm->month));//1-12
+  59   1          day = ((tm->day > 31) ? 31 : ((tm->day < 1) ? 1 : tm->day));//1-31
+  60   1      
+  61   1          //spring_ny 记录春节离当年元旦的天数
+  62   1          //sun_ny    记录阳历日离当年元旦的天数。
+  63   1          if(((LUNAR_CALENDAR_TABLE[year/* - 1901*/] & 0x0060) >> 5) == 1)
+  64   1          {
+  65   2              spring_ny = (LUNAR_CALENDAR_TABLE[year/* - 1901*/] & 0x001F) - 1;
+  66   2          }
+  67   1          else
+  68   1          {
+  69   2              spring_ny = (LUNAR_CALENDAR_TABLE[year/* - 1901*/] & 0x001F) - 1 + 31;
+  70   2          }
+  71   1      
+  72   1          sun_ny = LUNAR_MONTH_ADD[month - 1] + day - 1;
+  73   1      
+  74   1          if((!(year % 4)) && (month > 2))
+  75   1          {
+  76   2              sun_ny++;
+  77   2          }
+  78   1      
+  79   1          //stday_cnt 记录大小月的天数 29 或30
+  80   1          //index     记录从哪个月开始来计算
+  81   1          //flag      是用来对闰月的特殊处理
+  82   1          //判断阳历日在春节前还是春节后
+  83   1          if(sun_ny >= spring_ny) //阳历日在春节后（含春节那天）
+  84   1          {
+  85   2              sun_ny -= spring_ny;
+  86   2              month = 1;
+  87   2              index = 1;
+  88   2              flag = 0;
+  89   2      
+  90   2              if((LUNAR_CALENDAR_TABLE[year/* - 1901*/] & (0x80000 >> (index - 1))) == 0)
+  91   2                  stday_cnt = 29;
+  92   2              else
+  93   2                  stday_cnt = 30;
+  94   2      
+  95   2              while(sun_ny >= stday_cnt)
+C51 COMPILER V9.59.0.0   CHINA_NONLI                                                       05/06/2019 23:08:41 PAGE 3   
+
+  96   2              {
+  97   3                  sun_ny -= stday_cnt;
+  98   3                  index++;
+  99   3      
+ 100   3                  if(month == ((LUNAR_CALENDAR_TABLE[year/* - 1901*/] & 0xF00000) >> 20))
+ 101   3                  {
+ 102   4                      flag = ~flag;
+ 103   4      
+ 104   4                      if(flag == 0)
+ 105   4                          month++;
+ 106   4                  }
+ 107   3                  else
+ 108   3                      month++;
+ 109   3      
+ 110   3                  if((LUNAR_CALENDAR_TABLE[year/* - 1901*/] & (0x80000 >> (index - 1))) == 0)
+ 111   3                      stday_cnt = 29;
+ 112   3                  else
+ 113   3                      stday_cnt = 30;
+ 114   3              }
+ 115   2      
+ 116   2              day = sun_ny + 1;
+ 117   2          }
+ 118   1          else //阳历日在春节前
+ 119   1          {
+ 120   2              spring_ny -= sun_ny;
+ 121   2              year--;
+ 122   2              month = 12;
+ 123   2      
+ 124   2              if(((LUNAR_CALENDAR_TABLE[year/* - 1901*/] & 0xF00000) >> 20) == 0)
+ 125   2                  index = 12;
+ 126   2              else
+ 127   2                  index = 13;
+ 128   2      
+ 129   2              flag = 0;
+ 130   2      
+ 131   2              if((LUNAR_CALENDAR_TABLE[year/* - 1901*/] & (0x80000 >> (index - 1))) == 0)
+ 132   2                  stday_cnt = 29;
+ 133   2              else
+ 134   2                  stday_cnt = 30;
+ 135   2      
+ 136   2              while(spring_ny > stday_cnt)
+ 137   2              {
+ 138   3                  spring_ny -= stday_cnt;
+ 139   3                  index--;
+ 140   3      
+ 141   3                  if(flag == 0)
+ 142   3                      month--;
+ 143   3      
+ 144   3                  if(month == ((LUNAR_CALENDAR_TABLE[year/* - 1901*/] & 0xF00000) >> 20))
+ 145   3                      flag = ~flag;
+ 146   3      
+ 147   3                  if((LUNAR_CALENDAR_TABLE[year/* - 1901*/] & (0x80000 >> (index - 1))) == 0)
+ 148   3                      stday_cnt = 29;
+ 149   3                  else
+ 150   3                      stday_cnt = 30;
+ 151   3              }
+ 152   2      
+ 153   2              day = stday_cnt - spring_ny + 1;
+ 154   2          }
+ 155   1      
+ 156   1          noli_day |= day;
+ 157   1          noli_day |= (month << 6);
+C51 COMPILER V9.59.0.0   CHINA_NONLI                                                       05/06/2019 23:08:41 PAGE 4   
+
+ 158   1      
+ 159   1          nonli->day  = (uchar)(noli_day & 0x3F);
+ 160   1          nonli->month = (uchar)((noli_day & 0x3C0) >> 6);
+ 161   1      
+ 162   1          if(month == ((LUNAR_CALENDAR_TABLE[year/* - 1901*/] & 0xF00000) >> 20))
+ 163   1          {
+ 164   2              nonli->intcal = 1;
+ 165   2          }
+ 166   1          else
+ 167   1          {
+ 168   2              nonli->intcal = 0;
+ 169   2          }
+ 170   1      
+ 171   1          return RTN_OK;
+ 172   1      }
+ 173          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   2126    ----
+   CONSTANT SIZE    =    424    ----
+   XDATA SIZE       =   ----      36
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       6
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

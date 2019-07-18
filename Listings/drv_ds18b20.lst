@@ -1,0 +1,291 @@
+C51 COMPILER V9.59.0.0   DRV_DS18B20                                                       04/26/2019 20:49:16 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE DRV_DS18B20
+OBJECT MODULE PLACED IN .\Objects\drv_ds18b20.obj
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE src\drv_ds18b20.c OMF2 OPTIMIZE(8,SPEED) BROWSE INCDIR(.\src) DEBUG PRINT(.
+                    -\Listings\drv_ds18b20.lst) TABS(2) OBJECT(.\Objects\drv_ds18b20.obj)
+
+line level    source
+
+   1          #include "drv_ds18b20.h"
+   2          
+   3          sbit DQ_GPIO_PIN  = P3^6;
+   4          
+   5          //REGISTER COMMANDS
+   6          #define DS_REG_9_BITS               0x1F
+   7          #define DS_REG_10_BITS              0x3F
+   8          #define DS_REG_11_BITS              0x5F
+   9          #define DS_REG_12_BIT2              0x7F
+  10          //ROM COMMANDS
+  11          #define DS_CMD_ROM_SEARCH           0xF0
+  12          #define DS_CMD_ROM_READ             0x33
+  13          #define DS_CMD_ROM_MATCH            0x55
+  14          #define DS_CMD_ROM_SKIP             0xCC
+  15          #define DS_CMD_ROM_ALM_SEARCH       0xEC
+  16          //DS18b20 FUNCTION COMMANDS
+  17          #define DS_CMD_CONVERT_T            0x44
+  18          #define DS_CMD_WRITE_SCRATCHPAD     0x4E
+  19          #define DS_CMD_READ_SCRATCHPAD      0xBE
+  20          #define DS_CMD_COPY_SCRATCHPAD      0x48
+  21          #define DS_CMD_RECALL_EEPROM        0x88
+  22          #define DS_CMD_READ_PWRSUPPLY       0x84
+  23          
+  24          #define DQ_WRITE_H()     do{DQ_GPIO_PIN = 1;}while(0) //写1
+  25          #define DQ_WRITE_L()     do{DQ_GPIO_PIN = 0;}while(0) //写0
+  26          #define DQ_READ_BIT()    DQ_GPIO_PIN                  //读DQ上的值
+  27          
+  28          #if 0
+              /******************************************
+              函数名称：DQ_GPIO_PIN_OUTPUT
+              功    能：设置DQ引脚为开漏输出模式
+              参    数：无
+              返回值  ：无
+              *******************************************/
+              void DQ_GPIO_PIN_OUTPUT(void)
+              {
+              }
+              
+              /******************************************
+              函数名称：DQ_GPIO_PIN_INTPUT
+              功    能：设置DQ引脚为浮空输入模式
+              参    数：无
+              返回值  ：无
+              *******************************************/
+              void DQ_GPIO_PIN_INTPUT(void)
+              {
+              }
+              #else
+  49          #define DQ_GPIO_PIN_OUTPUT()
+  50          #define DQ_GPIO_PIN_INTPUT()
+  51          #endif
+  52          
+  53          /******************************************
+  54          函数名称：ds18b20_tx_reset_pulse
+C51 COMPILER V9.59.0.0   DRV_DS18B20                                                       04/26/2019 20:49:16 PAGE 2   
+
+  55          功    能：发送复位脉冲
+  56          参    数：无
+  57          返回值  ：无
+  58          *******************************************/
+  59          void ds18b20_tx_reset_pulse(void)
+  60          {
+  61   1          DQ_GPIO_PIN_OUTPUT();
+  62   1          DQ_WRITE_L();  //复位脉冲
+  63   1          delay_xus(500); //至少保持480us
+  64   1          DQ_WRITE_H();  //加速上升沿速度
+  65   1          delay_xus(1);
+  66   1      }
+  67          
+  68          /******************************************
+  69          函数名称：ds18b20_rx_presence_pulse
+  70          功    能：接受应答信号
+  71          参    数：无
+  72          返回值  ：无
+  73          *******************************************/
+  74          void ds18b20_rx_presence_pulse(void)
+  75          {
+  76   1          DQ_GPIO_PIN_INTPUT();
+  77   1          //while(DQ_READ_BIT());  //等待DS18b20应答
+  78   1          //while(DQ_READ_BIT() == 0); //DS18b20将总线拉低60~240us ,然后总线由上拉电阻拉高
+  79   1          delay_xus(300);
+  80   1          DQ_GPIO_PIN_OUTPUT();    //接受完成，主机重新控制总线
+  81   1      }
+  82          
+  83          /******************************************
+  84          函数名称：ds18b20_write_onebyte
+  85          功    能：写一个字节到DS18b20
+  86          参    数：无
+  87          返回值  ：无
+  88          *******************************************/
+  89          void ds18b20_write_onebyte(uint8_t datt)
+  90          {
+  91   1          uint8_t i;
+  92   1          DQ_GPIO_PIN_OUTPUT();
+  93   1          for(i=0;i<8;i++)
+  94   1          {
+  95   2              if(datt&0x01)    //低位在前
+  96   2              {
+  97   3                  //写1
+  98   3                  DQ_WRITE_L(); //写时间空隙总是从总线的低电平开始
+  99   3                  delay_xus(8);  //15us内拉高
+ 100   3                  DQ_WRITE_H();
+ 101   3                  delay_xus(80); //整个写1时隙不低于60us
+ 102   3              }
+ 103   2              else
+ 104   2              {
+ 105   3                  //写0
+ 106   3                  DQ_WRITE_L();
+ 107   3                  delay_xus(110); //保持在60us到120us之间
+ 108   3                  DQ_WRITE_H();
+ 109   3                  delay_xus(5);
+ 110   3              }
+ 111   2              datt >>= 1;
+ 112   2          }
+ 113   1      }
+ 114          
+ 115          /******************************************
+ 116          函数名称：ds18b20_read_onebyte
+C51 COMPILER V9.59.0.0   DRV_DS18B20                                                       04/26/2019 20:49:16 PAGE 3   
+
+ 117          功    能：从DS18b20读一个字节
+ 118          参    数：无
+ 119          返回值  ：读出的数据
+ 120          *******************************************/
+ 121          uint8_t ds18b20_read_onebyte(void)
+ 122          {
+ 123   1          uint8_t i ,datt = 0;
+ 124   1          
+ 125   1          for(i=0;i<8;i++)
+ 126   1          {
+ 127   2              DQ_GPIO_PIN_OUTPUT();
+ 128   2              datt >>= 1;
+ 129   2              DQ_WRITE_L();
+ 130   2              delay_xus(2);
+ 131   2              DQ_GPIO_PIN_INTPUT();
+ 132   2              delay_xus(1);
+ 133   2              if(DQ_READ_BIT())
+ 134   2              {
+ 135   3                  datt |= 0x80;
+ 136   3              }
+ 137   2              delay_xus(70);   //等待这一位数据完成传输
+ 138   2          }
+ 139   1          DQ_GPIO_PIN_OUTPUT();
+ 140   1          return datt;
+ 141   1      }
+ 142          
+ 143          /******************************************
+ 144          函数名称：ds18b20_read_temp
+ 145          功    能：读取温度信息
+ 146          参    数：*sign - 保存符号（零上或零下）
+ 147                    *integer - 保存整数部分
+ 148                    *decimal - 保存小数部分
+ 149          返回值  ：无
+ 150          *******************************************/
+ 151          void ds18b20_read_temp(uint8_t *sign ,uint16_t *interger ,uint16_t *decimal)
+ 152          {
+ 153   1          uint8_t a=0,b=0;
+ 154   1          
+ 155   1          uint16_t tmp;
+ 156   1      
+ 157   1          ds18b20_init();
+ 158   1          ds18b20_write_onebyte(DS_CMD_ROM_READ);
+ 159   1        
+ 160   1          ds18b20_init();
+ 161   1          ds18b20_write_onebyte(DS_CMD_ROM_SKIP);//跳过读序列号操作
+ 162   1          ds18b20_write_onebyte(DS_CMD_CONVERT_T); //启动温度转换
+ 163   1          delay_xms(780);//等待DS18b20转换完成
+ 164   1          
+ 165   1          ds18b20_init();
+ 166   1          ds18b20_write_onebyte(DS_CMD_ROM_SKIP);
+ 167   1          ds18b20_write_onebyte(DS_CMD_READ_SCRATCHPAD); //读取寄存器内容（可以从寄存器0读到寄存器8）
+ 168   1          
+ 169   1          a= ds18b20_read_onebyte();     //温度低8位
+ 170   1          b= ds18b20_read_onebyte();     //温度高8位
+ 171   1          
+ 172   1          ds18b20_tx_reset_pulse();  //停止数据读取
+ 173   1          tmp = (b<<8) | a;
+ 174   1          if(b & 0xF0)
+ 175   1          {
+ 176   2            *sign = 1;              //符号部分
+ 177   2            tmp = ~tmp+1;
+ 178   2          }
+C51 COMPILER V9.59.0.0   DRV_DS18B20                                                       04/26/2019 20:49:16 PAGE 4   
+
+ 179   1          else 
+ 180   1          {
+ 181   2            *sign = 0;
+ 182   2          }
+ 183   1          *interger = (tmp>>4) & 0x00FF;  //整数部分
+ 184   1          *decimal = (tmp & 0x000F) * 625; //小数部分 
+ 185   1      }
+ 186          
+ 187          /******************************************
+ 188          函数名称：ds18b20_write_eeprom
+ 189          功    能：写配置参数
+ 190          参    数：temph - 报警温度上限
+ 191                    templ - 报警温度下限
+ 192                    reg_ctrl - 控制寄存器的值
+ 193          返回值  ：读出的数据
+ 194          *******************************************/
+ 195          void ds18b20_write_eeprom(uint8_t temph,uint8_t templ,uint8_t reg_ctrl)
+ 196          {
+ 197   1          ds18b20_init();
+ 198   1          ds18b20_write_onebyte(DS_CMD_ROM_SKIP);
+ 199   1          ds18b20_write_onebyte(DS_CMD_WRITE_SCRATCHPAD);
+ 200   1          
+ 201   1          ds18b20_write_onebyte(temph);//temph=7F
+ 202   1          ds18b20_write_onebyte(templ);//templ=FF 最高位符号位
+ 203   1          ds18b20_write_onebyte(reg_ctrl);//12位模式
+ 204   1          
+ 205   1          delay_xms(700);
+ 206   1          ds18b20_init();
+ 207   1          ds18b20_write_onebyte(DS_CMD_ROM_SKIP);
+ 208   1          ds18b20_write_onebyte(DS_CMD_COPY_SCRATCHPAD);//将寄存器的配置值写入EEPROM
+ 209   1          
+ 210   1          delay_xms(300);
+ 211   1      }
+ 212          /******************************************
+ 213          函数名称：ds18b20_init
+ 214          功    能：初始化DS18b20
+ 215          参    数：无
+ 216          返回值  ：无
+ 217          *******************************************/
+ 218          void ds18b20_init(void)
+ 219          {
+ 220   1          ds18b20_tx_reset_pulse();
+ 221   1          ds18b20_rx_presence_pulse(); 
+ 222   1      }
+ 223          
+ 224          #if 0
+              void ds18b20_disp_temp(uint16_t x,uint16_t y,uint16_t color,uint16_t bkcolor)
+              {
+                uint8_t sign = 0,interger = 0;
+                uint16_t decimal = 0;
+              
+                ds18b20_read_temp(&sign,&interger,&decimal);
+                interger = interger % 1000;
+                decimal  = decimal  % 1000;
+                if(sign)
+                  LCD_DrawNum(x,    y,x+34, y+64,(u8 *)&NUM_CHAR[27300],color,bkcolor);//-
+                else
+                  LCD_DrawNum(x,    y,x+34, y+64,(u8 *)&NUM_CHAR[25025],color,bkcolor);//+
+              
+                if(interger>=100)//百位
+                  LCD_DrawNum(x+35, y,x+69, y+64,(u8 *)&NUM_CHAR[(interger  / 100)  *2275],color,bkcolor);
+                else
+C51 COMPILER V9.59.0.0   DRV_DS18B20                                                       04/26/2019 20:49:16 PAGE 5   
+
+                  LCD_DrawNum(x+35, y,x+69, y+64,(u8 *)&NUM_CHAR[0],bkcolor,bkcolor);
+                if(interger>=10)//十位
+                  LCD_DrawNum(x+70, y,x+104,y+64,(u8 *)&NUM_CHAR[((interger % 100)/10)*2275],color,bkcolor);
+                else
+                  LCD_DrawNum(x+70, y,x+104,y+64,(u8 *)&NUM_CHAR[0],bkcolor,bkcolor);
+                LCD_DrawNum(x+105,y,x+139,y+64,(u8 *)&NUM_CHAR[(interger  % 10)   *2275],color,bkcolor);//个位
+              
+                LCD_DrawNum(x+140,y,x+174,y+64,(u8 *)&NUM_CHAR[31850],color,bkcolor);//点
+              
+                LCD_DrawNum(x+175,y,x+209,y+64,(u8 *)&NUM_CHAR[(decimal  / 100)   *2275],color,bkcolor);
+                LCD_DrawNum(x+210,y,x+244,y+64,(u8 *)&NUM_CHAR[((decimal % 100)/10) *2275],color,bkcolor);
+              
+                LCD_DrawNum(x+245,y,x+279,y+64,(u8 *)&NUM_CHAR[29575],color,bkcolor);//℃ 
+              }
+              #endif
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    373    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      18
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

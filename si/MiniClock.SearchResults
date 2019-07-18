@@ -1,0 +1,4 @@
+---- LED_SEGB_SET Matches (3 in 2 files) ----
+drv_led.h:#define LED_SEGB_SET(seg)   ((uchar)(0X01 << seg))
+main.c:                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
+main.c:                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 0, 1);

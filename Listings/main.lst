@@ -1,0 +1,1195 @@
+C51 COMPILER V9.59.0.0   MAIN                                                              05/06/2019 23:08:39 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE src\main.c OMF2 OPTIMIZE(8,SPEED) BROWSE INCDIR(.\src) DEBUG PRINT(.\Listin
+                    -gs\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "common.h"
+   2          #include "drv_led.h"
+   3          #include "drv_key.h"
+   4          #include "drv_3231.h"
+   5          #include "china_nonli.h"
+   6          #include "drv_18b20.h"
+   7          
+   8          #include "drv_cfg.h"
+   9          
+  10          #define DEF_SYS_LED_FPS      (100u)
+  11          #define DEF_SYS_LED_FLASH    (3u)
+  12          #define DEF_SYS_LED_MIRROR   (0u)
+  13          #define DEF_SYS_AUTOEXIT_TMR (150u)
+  14          #define DEF_SYS_LED_LIGHT    (5u)
+  15          #define DEF_SYS_AUTO_SLEEP   (1u)
+  16          
+  17          //菜单列表
+  18          typedef enum page_mode_e
+  19          {
+  20              PAGE_MENU_MIN = 0x1Au,
+  21              PAGE_MENU_MAIN = PAGE_MENU_MIN,//主界面
+  22              PAGE_MENU_STIME,//时间设置界面
+  23              PAGE_MENU_SDATE,//日期设置界面
+  24              PAGE_MENU_SATSLEEP,//自动休眠设置
+  25              PAGE_MENU_SYSCFG,//系统设置
+  26              PAGE_MENU_MAX,
+  27              PAGE_MENU_POWER,
+  28          } page_mode_e;
+  29          
+  30          //计时模式
+  31          typedef enum main_mode_e
+  32          {
+  33              MAIN_MODE_MIN = 0x20u,
+  34              MAIN_MODE_TIME = MAIN_MODE_MIN, //time
+  35              MAIN_MODE_TEMP, // temp
+  36              MAIN_MODE_NONLI, // nonli
+  37              MAIN_MODE_MAX,
+  38          } main_mode_t;
+  39          
+  40          //主页切换
+  41          typedef enum main_page_e
+  42          {
+  43              MAIN_PAGE_MIN = 0x2Au,
+  44              MAIN_PAGE_HHMM = MAIN_PAGE_MIN, //hour - minute
+  45              MAIN_PAGE_TTSS, // am/pm - second
+  46              MAIN_PAGE_YYYY, // year
+  47              MAIN_PAGE_MMDD, // month - day
+  48              MAIN_PAGE_DDDD, // week
+  49              MAIN_PAGE_MAX,
+  50          } main_page_t;
+  51          
+  52          
+  53          //时间设置界面
+  54          typedef enum set_time_page_e
+C51 COMPILER V9.59.0.0   MAIN                                                              05/06/2019 23:08:39 PAGE 2   
+
+  55          {
+  56              SET_TIME_PAGE_MIN = 0x3Au,
+  57              SET_TIME_PAGE_HOUR = SET_TIME_PAGE_MIN, //hour
+  58              SET_TIME_PAGE_MINUTE,   // minute
+  59              SET_TIME_PAGE_SECOND,   // second
+  60              SET_TIME_PAGE_MAX,
+  61          } set_time_page_t;
+  62          
+  63          //日期设置界面
+  64          typedef enum set_date_page_e
+  65          {
+  66              SET_DATE_PAGE_MIN = 0x4Au,
+  67              SET_DATE_PAGE_YEAR = SET_DATE_PAGE_MIN, // year
+  68              SET_DATE_PAGE_WEEK,     // week
+  69              SET_DATE_PAGE_MONTH,    // month
+  70              SET_DATE_PAGE_DAY,      // day
+  71              SET_DATE_PAGE_MAX,
+  72          } set_date_page_t;
+  73          
+  74          typedef enum set_system_page_e
+  75          {
+  76              SET_SYSTEM_PAGE_MIN = 0x50u,
+  77              SET_SYSTEM_PAGE_LIGHT = SET_SYSTEM_PAGE_MIN,
+  78              SET_SYSTEM_PAGE_MIRROR,
+  79              SET_SYSTEM_PAGE_MAX,
+  80          }set_system_page_t;
+  81          
+  82          //加减操作
+  83          typedef enum set_oper_e
+  84          {
+  85              SET_OPER_MIN = 0x5Au,
+  86              SET_OPER_ADD,
+  87              SET_OPER_SUB,
+  88              SET_OPER_MAX,
+  89          } set_oper_t;
+  90          
+  91          //日期设置界面
+  92          typedef enum set_auto_sleep_e
+  93          {
+  94              SET_AUTO_SLEEP_MIN = 0x6Au,
+  95              SET_AUTO_SLEEP_SHOUR = SET_AUTO_SLEEP_MIN,
+  96              SET_AUTO_SLEEP_SMINUTE,
+  97              SET_AUTO_SLEEP_EHOUR,
+  98              SET_AUTO_SLEEP_EMINUTE,
+  99              SET_AUTO_SLEEP_ON,
+ 100              SET_AUTO_SLEEP_MAX,
+ 101          } set_auto_sleep_t;
+ 102          
+ 103          typedef struct auto_sleep_s
+ 104          {
+ 105              uint8 s_hour;
+ 106              uint8 s_min;
+ 107              uint8 e_hour;
+ 108              uint8 e_min;
+ 109              uint8 on;
+ 110          } auto_sleep_t;
+ 111          
+ 112          typedef struct system_cfg_e
+ 113          {
+ 114              uint8 led_light;
+ 115              uint8 led_mirror;
+ 116              auto_sleep_t autosleep;
+C51 COMPILER V9.59.0.0   MAIN                                                              05/06/2019 23:08:39 PAGE 3   
+
+ 117          } system_cfg_t;
+ 118          
+ 119          #define SYSTEM_CFG_SIZE ((SET_SYSTEM_PAGE_MAX-SET_SYSTEM_PAGE_MIN)+(SET_AUTO_SLEEP_MAX-SET_AUTO_SLEEP_MIN)
+             -)//sizeof(sys_cfg_t)
+ 120          
+ 121          void system_cfg_init(system_cfg_t* cfg)
+ 122          {
+ 123   1          if(cfg != NULL)
+ 124   1          {
+ 125   2              cfg->led_light = DEF_SYS_LED_LIGHT;
+ 126   2              cfg->led_mirror = DEF_SYS_LED_MIRROR;
+ 127   2              cfg->autosleep.on = DEF_SYS_AUTO_SLEEP;
+ 128   2              cfg->autosleep.s_hour = 22;
+ 129   2              cfg->autosleep.s_min = 30;
+ 130   2              cfg->autosleep.e_hour = 7;
+ 131   2              cfg->autosleep.e_min = 30;
+ 132   2          }
+ 133   1      }
+ 134          
+ 135          uint8 system_cfg_write(system_cfg_t* cfg)
+ 136          {
+ 137   1          uint8 ret = RTN_ERR;
+ 138   1          if(cfg != NULL)
+ 139   1          {
+ 140   2              ret = cfgsave_write((uint8*)cfg, /*sizeof(system_cfg_t)*/SYSTEM_CFG_SIZE);
+ 141   2          }
+ 142   1          
+ 143   1          return ret;
+ 144   1      }
+ 145          
+ 146          uint8 system_cfg_read(system_cfg_t* cfg)
+ 147          {
+ 148   1          uint8 ret = RTN_ERR;
+ 149   1          if(cfg != NULL)
+ 150   1          {
+ 151   2              ret = cfgsave_read((uint8*)cfg, /*sizeof(system_cfg_t)*/SYSTEM_CFG_SIZE);
+ 152   2          }
+ 153   1          
+ 154   1          return ret;
+ 155   1      }
+ 156          
+ 157          uint8 system_cfg_copy(system_cfg_t* dst, system_cfg_t* src)
+ 158          {
+ 159   1          uint8 ret = RTN_ERR;
+ 160   1          if((dst != NULL) && (src != NULL) && (src != dst))
+ 161   1          {
+ 162   2              dst->led_light = src->led_light;
+ 163   2              dst->led_mirror = src->led_mirror;
+ 164   2              dst->autosleep.on = src->autosleep.on;
+ 165   2              dst->autosleep.s_hour = src->autosleep.s_hour;
+ 166   2              dst->autosleep.s_min = src->autosleep.s_min;
+ 167   2              dst->autosleep.e_hour = src->autosleep.e_hour;
+ 168   2              dst->autosleep.e_min = src->autosleep.e_min;
+ 169   2              ret = RTN_OK;
+ 170   2          }
+ 171   1          
+ 172   1          return ret;
+ 173   1      }
+ 174          
+ 175          void system_cfg_apply(system_cfg_t* cfg)
+ 176          {
+ 177   1          if(cfg != NULL)
+C51 COMPILER V9.59.0.0   MAIN                                                              05/06/2019 23:08:39 PAGE 4   
+
+ 178   1          {
+ 179   2              led_set_light(cfg->led_light);
+ 180   2              led_set_mirror(cfg->led_mirror);
+ 181   2              key_set_mirror(cfg->led_mirror);
+ 182   2          }
+ 183   1      }
+ 184          
+ 185          void _menu_data_deal_(uchar *dat, uchar op, uchar max, uchar min)
+ 186          {
+ 187   1          char data_t = 0;
+ 188   1          if((op == SET_OPER_ADD) || (op == SET_OPER_SUB))
+ 189   1          {
+ 190   2              data_t = (char)(*dat);
+ 191   2              if(op == SET_OPER_ADD)//加
+ 192   2              {
+ 193   3                  data_t++;
+ 194   3                  if(data_t > max)
+ 195   3                  {
+ 196   4                      data_t = min;
+ 197   4                  }
+ 198   3              }
+ 199   2              else if(op == SET_OPER_SUB)///减
+ 200   2              {
+ 201   3                  data_t--;
+ 202   3                  if(data_t < min)
+ 203   3                  {
+ 204   4                      data_t = max;
+ 205   4                  }
+ 206   3              }
+ 207   2              *dat = (uchar)data_t;
+ 208   2          }
+ 209   1      }
+ 210          
+ 211          void show_main_page(rtc_time_t *tm, uchar page)
+ 212          {
+ 213   1          uchar n = 0;
+ 214   1          char xdata disp_str[LED_POS_MAX+1] = {0};
+ 215   1          if(tm == NULL)
+ 216   1          {
+ 217   2              return;
+ 218   2          }
+ 219   1      
+ 220   1          switch(page)
+ 221   1          {
+ 222   2          case MAIN_PAGE_HHMM:
+ 223   2              tm->hour   = tm->hour % 100;
+ 224   2              tm->minute = tm->minute % 100;
+ 225   2      
+ 226   2              led_puti(0, (tm->hour / 10), 1);
+ 227   2              led_puti(1, (tm->hour % 10), 1);
+ 228   2              led_puti(2, (tm->minute / 10), 1);
+ 229   2              led_puti(3, (tm->minute % 10), 1);
+ 230   2      
+ 231   2              //sprintf(disp_str, "%bu%bu%bu%bu", (tm->hour / 10), (tm->hour % 10), (tm->minute / 10), (tm->minu
+             -te % 10));
+ 232   2              //led_puts(0, disp_str, 1);
+ 233   2      
+ 234   2              for(n=0; n<LED_POS_MAX; n++)
+ 235   2              {
+ 236   3                  if(((tm->second) % LED_POS_MAX) == n)
+ 237   3                  {
+ 238   4                      led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
+C51 COMPILER V9.59.0.0   MAIN                                                              05/06/2019 23:08:39 PAGE 5   
+
+ 239   4                  }
+ 240   3                  else
+ 241   3                  {
+ 242   4                      led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 0, 1);
+ 243   4                  }
+ 244   3              }
+ 245   2              break;
+ 246   2          case MAIN_PAGE_TTSS:
+ 247   2              tm->second = tm->second % 100;
+ 248   2      
+ 249   2              led_puti(0, LED_SEG_NULL, 1);
+ 250   2              led_puti(1, (tm->second / 10), 1);
+ 251   2              led_puti(2, (tm->second % 10), 1);
+ 252   2              led_puti(3, LED_SEG_NULL, 1);
+ 253   2      
+ 254   2              //sprintf(disp_str, " %bu%bu ", (tm->second / 10), (tm->second % 10));
+ 255   2              //led_puts(0, disp_str, 1);
+ 256   2              break;
+ 257   2          case MAIN_PAGE_YYYY:
+ 258   2              tm->year = tm->year % 100;
+ 259   2      
+ 260   2              led_puti(0, 2, 1);
+ 261   2              led_puti(1, 0, 1);
+ 262   2              led_puti(2, (tm->year / 10), 1);
+ 263   2              led_puti(3, (tm->year % 10), 1);
+ 264   2      
+ 265   2              //sprintf(disp_str, "20%bu%bu", (tm->year / 10), (tm->year % 10));
+ 266   2              //led_puts(0, disp_str, 1);
+ 267   2              break;
+ 268   2          case MAIN_PAGE_MMDD:
+ 269   2              tm->month = tm->month % 100;
+ 270   2              tm->day   = tm->day % 100;
+ 271   2      
+ 272   2              led_puti(0, (tm->month / 10), 1);
+ 273   2              led_puti(1, (tm->month % 10), 1);
+ 274   2              led_puti(2, (tm->day / 10), 1);
+ 275   2              led_puti(3, (tm->day % 10), 1);
+ 276   2      
+ 277   2              //sprintf(disp_str, "%bu%bu%bu%bu", (tm->month / 10), (tm->month % 10), (tm->day / 10), (tm->day %
+             - 10));
+ 278   2              //led_puts(0, disp_str, 1);
+ 279   2              break;
+ 280   2          case MAIN_PAGE_DDDD:
+ 281   2              tm->week   = tm->week % 100;
+ 282   2      
+ 283   2              led_puti(0, (LED_SEG_NULL), 1);
+ 284   2              led_puti(1, (LED_SEG_EFG), 1);
+ 285   2              led_puti(2, (tm->week % 10), 1);
+ 286   2              led_puti(3, (LED_SEG_BCG), 1);
+ 287   2      
+ 288   2              //sprintf(disp_str, " {%bu}", /*(((tm->week % 10) > 5) ? "-" : " "),*/ (tm->week % 10));
+ 289   2              //led_puts(0, disp_str, 1);
+ 290   2              break;
+ 291   2          default:
+ 292   2              break;
+ 293   2          }
+ 294   1      }
+ 295          
+ 296          void show_time_set_page(rtc_time_t *tm, uchar page, uchar op)
+ 297          {
+ 298   1          uchar dat = 0;
+ 299   1          char xdata disp_str[LED_POS_MAX+1] = {0};
+C51 COMPILER V9.59.0.0   MAIN                                                              05/06/2019 23:08:39 PAGE 6   
+
+ 300   1      
+ 301   1          if(tm == NULL)
+ 302   1          {
+ 303   2              return;
+ 304   2          }
+ 305   1      
+ 306   1          switch(page)
+ 307   1          {
+ 308   2          case SET_TIME_PAGE_HOUR:
+ 309   2              dat = tm->hour;
+ 310   2              _menu_data_deal_(&dat, op, 23, 0);
+ 311   2              tm->hour = dat;
+ 312   2              break;
+ 313   2          case SET_TIME_PAGE_MINUTE:
+ 314   2              dat = tm->minute;
+ 315   2              _menu_data_deal_(&dat, op, 59, 0);
+ 316   2              tm->minute = dat;
+ 317   2              break;
+ 318   2          case SET_TIME_PAGE_SECOND:
+ 319   2              dat = tm->second;
+ 320   2              _menu_data_deal_(&dat, op, 59, 0);
+ 321   2              tm->second = dat;
+ 322   2              break;
+ 323   2          default:
+ 324   2              break;
+ 325   2          }
+ 326   1      
+ 327   1          page = page - SET_TIME_PAGE_MIN;
+ 328   1      
+ 329   1          disp_str[0] = LED_SEG_C;
+ 330   1      
+ 331   1          //page %= (LED_SEG_SG - LED_SEG_SA + 1);
+ 332   1          disp_str[1] = page + 1;
+ 333   1      
+ 334   1          //dat %= 100;
+ 335   1          disp_str[2] = dat / 10;
+ 336   1          disp_str[3] = dat % 10;
+ 337   1          led_putis(0, disp_str, LED_POS_MAX, 1);
+ 338   1      }
+ 339          
+ 340          void show_date_set_page(rtc_time_t *tm, uchar page, uchar op)
+ 341          {
+ 342   1          uchar n = 0;
+ 343   1          uchar dat = 0;
+ 344   1          char xdata disp_str[LED_POS_MAX+1] = {0};
+ 345   1      
+ 346   1          if(tm == NULL)
+ 347   1          {
+ 348   2              return;
+ 349   2          }
+ 350   1      
+ 351   1          switch(page)
+ 352   1          {
+ 353   2          case SET_DATE_PAGE_YEAR:
+ 354   2              dat = tm->year;
+ 355   2              _menu_data_deal_(&dat, op, 99, 0);
+ 356   2              tm->year = dat;
+ 357   2              break;
+ 358   2          case SET_DATE_PAGE_MONTH:
+ 359   2              dat = tm->month;
+ 360   2              _menu_data_deal_(&dat, op, 12, 1);
+ 361   2              tm->month = dat;
+C51 COMPILER V9.59.0.0   MAIN                                                              05/06/2019 23:08:39 PAGE 7   
+
+ 362   2              break;
+ 363   2          case SET_DATE_PAGE_DAY:
+ 364   2              dat = tm->day;
+ 365   2              _menu_data_deal_(&dat, op, 31, 1);
+ 366   2              tm->day = dat;
+ 367   2              break;
+ 368   2          case SET_DATE_PAGE_WEEK:
+ 369   2              n = 1;
+ 370   2              dat = tm->week;
+ 371   2              _menu_data_deal_(&dat, op, 7, 1);
+ 372   2              tm->week = dat;
+ 373   2              break;
+ 374   2          default:
+ 375   2              break;
+ 376   2          }
+ 377   1      
+ 378   1          page = page - SET_DATE_PAGE_MIN;
+ 379   1      
+ 380   1          disp_str[0] = LED_SEG_H;
+ 381   1      
+ 382   1          //page %= (LED_SEG_SG - LED_SEG_SA + 1);
+ 383   1          disp_str[1] = page + 1;
+ 384   1      
+ 385   1          //dat %= 100;
+ 386   1          disp_str[2] = dat / 10;
+ 387   1          disp_str[3] = dat % 10;
+ 388   1          led_putis(0, disp_str, LED_POS_MAX, 1);
+ 389   1      }
+ 390          
+ 391          void show_system_set_page(system_cfg_t*cfg, uchar page, uchar op)
+ 392          {
+ 393   1          uchar n = 0;
+ 394   1          uchar dat = 0;
+ 395   1          char xdata disp_str[LED_POS_MAX+1] = {0};
+ 396   1      
+ 397   1          if(cfg == NULL)
+ 398   1          {
+ 399   2              return;
+ 400   2          }
+ 401   1      
+ 402   1          switch(page)
+ 403   1          {
+ 404   2          case SET_SYSTEM_PAGE_LIGHT:
+ 405   2              dat = cfg->led_light;
+ 406   2              _menu_data_deal_(&dat, op, LED_MAX_LIGHT, LED_MIN_LIGHT);
+ 407   2              cfg->led_light = dat;
+ 408   2              break;
+ 409   2          case SET_SYSTEM_PAGE_MIRROR:
+ 410   2              dat = cfg->led_mirror;
+ 411   2              _menu_data_deal_(&dat, op, 1, 0);
+ 412   2              cfg->led_mirror = dat;
+ 413   2              break;
+ 414   2          default:
+ 415   2              break;
+ 416   2          }
+ 417   1      
+ 418   1          page = page - SET_SYSTEM_PAGE_MIN;
+ 419   1      
+ 420   1          disp_str[0] = LED_SEG_P;
+ 421   1      
+ 422   1          //page %= (LED_SEG_SG - LED_SEG_SA + 1);
+ 423   1          disp_str[1] = page + 1;
+C51 COMPILER V9.59.0.0   MAIN                                                              05/06/2019 23:08:39 PAGE 8   
+
+ 424   1      
+ 425   1          //dat %= 100;
+ 426   1          disp_str[2] = dat / 10;
+ 427   1          disp_str[3] = dat % 10;
+ 428   1          led_putis(0, disp_str, LED_POS_MAX, 1);
+ 429   1      }
+ 430          
+ 431          void show_autosleep_set_page(system_cfg_t*cfg, uchar page, uchar op)
+ 432          {
+ 433   1          uchar n = 0;
+ 434   1          uchar dat = 0;
+ 435   1          char xdata disp_str[LED_POS_MAX+1] = {0};
+ 436   1      
+ 437   1          if(cfg == NULL)
+ 438   1          {
+ 439   2              return;
+ 440   2          }
+ 441   1      
+ 442   1          switch(page)
+ 443   1          {
+ 444   2          case SET_AUTO_SLEEP_SHOUR:
+ 445   2              dat = cfg->autosleep.s_hour;
+ 446   2              _menu_data_deal_(&dat, op, 23, 0);
+ 447   2              cfg->autosleep.s_hour = dat;
+ 448   2              break;
+ 449   2          case SET_AUTO_SLEEP_SMINUTE:
+ 450   2              dat = cfg->autosleep.s_min;
+ 451   2              _menu_data_deal_(&dat, op, 59, 0);
+ 452   2              cfg->autosleep.s_min = dat;
+ 453   2              break;
+ 454   2          case SET_AUTO_SLEEP_EHOUR:
+ 455   2              dat = cfg->autosleep.e_hour;
+ 456   2              _menu_data_deal_(&dat, op, 23, 0);
+ 457   2              cfg->autosleep.e_hour = dat;
+ 458   2              break;
+ 459   2          case SET_AUTO_SLEEP_EMINUTE:
+ 460   2              dat = cfg->autosleep.e_min;
+ 461   2              _menu_data_deal_(&dat, op, 59, 0);
+ 462   2              cfg->autosleep.e_min = dat;
+ 463   2              break;
+ 464   2          case SET_AUTO_SLEEP_ON:
+ 465   2              dat = cfg->autosleep.on;
+ 466   2              _menu_data_deal_(&dat, op, 1, 0);
+ 467   2              cfg->autosleep.on = dat;
+ 468   2              break;
+ 469   2          default:
+ 470   2              break;
+ 471   2          }
+ 472   1      
+ 473   1          page = page - SET_AUTO_SLEEP_MIN;
+ 474   1      
+ 475   1          disp_str[0] = LED_SEG_A;
+ 476   1      
+ 477   1          //page %= (LED_SEG_SG - LED_SEG_SA + 1);
+ 478   1          disp_str[1] = page + 1;
+ 479   1      
+ 480   1          //dat %= 100;
+ 481   1          disp_str[2] = dat / 10;
+ 482   1          disp_str[3] = dat % 10;
+ 483   1          led_putis(0, disp_str, LED_POS_MAX, 1);
+ 484   1      }
+ 485          
+C51 COMPILER V9.59.0.0   MAIN                                                              05/06/2019 23:08:39 PAGE 9   
+
+ 486          void show_temp_page(void)
+ 487          {
+ 488   1          uint8 xdata sign = 0;
+ 489   1          uint8 xdata disp_temp = 0;
+ 490   1          uint16 xdata interger = 0;
+ 491   1          uint16 xdata decimal = 0;
+ 492   1      
+ 493   1          if(ds18b20_get_temp(&sign, &interger, &decimal) == RTN_OK)
+ 494   1          {
+ 495   2              if(sign)//负数
+ 496   2              {
+ 497   3                  disp_temp = ((decimal >= 5) ? (interger + 1) : interger);
+ 498   3                  disp_temp %= 100;
+ 499   3                  led_puti(0, LED_SEG_HL, 1);//负号
+ 500   3                  led_puti(1, disp_temp / 10, 1);//十位
+ 501   3                  led_puti(2, disp_temp % 10, 1);//个位
+ 502   3              }
+ 503   2              else//正数
+ 504   2              {
+ 505   3                  disp_temp = (interger % 100);
+ 506   3                  led_puti(0, disp_temp / 10, 1);//十位
+ 507   3                  led_puti(1, disp_temp % 10, 1);//个位
+ 508   3                  led_puti(2, decimal % 10, 1);//小数
+ 509   3                  if(led_get_mirror())//小数点
+ 510   3                  {//如果镜像显示，则小数点应该后移一位
+ 511   4                      led_putb(2, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
+ 512   4                  }
+ 513   3                  else
+ 514   3                  {
+ 515   4                      led_putb(1, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
+ 516   4                  }
+ 517   3              }
+ 518   2              led_puti(3, LED_SEG_CEL, 1); // 摄氏度
+ 519   2          }
+ 520   1      }
+ 521          
+ 522          void show_nonli_page(rtc_time_t* time_t)
+ 523          {
+ 524   1          uchar xdata i = 0;
+ 525   1          china_nonli_t xdata nonli_t = {0};
+ 526   1      
+ 527   1          if(time_t == NULL)
+ 528   1          {
+ 529   2              return;
+ 530   2          }
+ 531   1      
+ 532   1          if(china_nonli_get(time_t, &nonli_t) != RTN_OK)
+ 533   1          {
+ 534   2              return;
+ 535   2          }
+ 536   1      
+ 537   1          //为了区分，显示四个点
+ 538   1          led_puti(0, nonli_t.month / 10, 1);
+ 539   1          led_puti(1, nonli_t.month % 10, 1);
+ 540   1          led_puti(2, nonli_t.day / 10, 1);
+ 541   1          led_puti(3, nonli_t.day % 10, 1);
+ 542   1      
+ 543   1          for(i=0; i<LED_POS_MAX; i++)
+ 544   1          {
+ 545   2              led_putb(i, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
+ 546   2          }
+ 547   1      }
+C51 COMPILER V9.59.0.0   MAIN                                                              05/06/2019 23:08:39 PAGE 10  
+
+ 548          
+ 549          void main(void)
+ 550          {
+ 551   1      #if 1
+ 552   1          uchar i = 0, j = 0;
+ 553   1          uchar key_code = 0;
+ 554   1          uchar page_menu_cnt = PAGE_MENU_MIN;
+ 555   1          uchar main_page_cnt = MAIN_PAGE_MIN;
+ 556   1          uchar main_mode_cnt = MAIN_MODE_MIN;
+ 557   1          uchar settime_page_cnt = SET_TIME_PAGE_MIN;
+ 558   1          uchar setdate_page_cnt = SET_DATE_PAGE_MIN;
+ 559   1          uchar setsys_page_cnt = SET_SYSTEM_PAGE_MIN;
+ 560   1          uchar setauto_sleep_cnt = SET_AUTO_SLEEP_MIN;
+ 561   1          uchar set_oper = SET_OPER_MIN;
+ 562   1          rtc_time_t time_t = {0};
+ 563   1          rtc_time_t xdata time_set = {0};
+ 564   1          rtc_time_t xdata date_set = {0};
+ 565   1          china_nonli_t xdata nonli_t = {0};
+ 566   1      
+ 567   1          system_cfg_t xdata syscfg_t = {0};
+ 568   1          system_cfg_t xdata syscfg_set = {0};
+ 569   1      
+ 570   1          uint8 main_autoexit_timer = 0;
+ 571   1          uint8 main_mode_force = 0;
+ 572   1      
+ 573   1          key_init();
+ 574   1          led_init();
+ 575   1          ds3231_init();
+ 576   1      
+ 577   1          if(system_cfg_read(&syscfg_t) != RTN_OK)
+ 578   1          {
+ 579   2              system_cfg_init(&syscfg_t);
+ 580   2              system_cfg_write(&syscfg_t);
+ 581   2          }
+ 582   1          system_cfg_apply(&syscfg_t);
+ 583   1      
+ 584   1          led_open_door(30);
+ 585   1          led_close_door(30);
+ 586   1      
+ 587   1          while(1)
+ 588   1          {
+ 589   2              key_code = key_get_code();
+ 590   2      
+ 591   2              set_oper = SET_OPER_MIN;
+ 592   2      
+ 593   2              if(key_code != KEY_BTN_NULL)
+ 594   2              {
+ 595   3                  main_autoexit_timer = 0;
+ 596   3                  main_mode_force = 0;
+ 597   3      
+ 598   3                  //按任意键退出休眠模式
+ 599   3                  if(page_menu_cnt == PAGE_MENU_POWER)
+ 600   3                  {
+ 601   4                      led_open();
+ 602   4                      page_menu_cnt = PAGE_MENU_MAIN;
+ 603   4                      main_autoexit_timer = DEF_SYS_AUTOEXIT_TMR+1;
+ 604   4                      key_code = KEY_BTN_NULL;
+ 605   4                      led_open_door(30);
+ 606   4                  }
+ 607   3                  
+ 608   3                  switch(key_code)
+ 609   3                  {
+C51 COMPILER V9.59.0.0   MAIN                                                              05/06/2019 23:08:39 PAGE 11  
+
+ 610   4                  case KEY_BTN_NEXT_PAGE://下一个界面
+ 611   4                  {
+ 612   5                      page_menu_cnt++;
+ 613   5                      if(page_menu_cnt >= PAGE_MENU_MAX)
+ 614   5                      {
+ 615   6                          page_menu_cnt = PAGE_MENU_MIN;
+ 616   6                      }
+ 617   5      
+ 618   5                      if(page_menu_cnt == PAGE_MENU_MAIN)
+ 619   5                      {
+ 620   6                          main_mode_cnt = MAIN_MODE_MIN;
+ 621   6                          main_page_cnt = MAIN_PAGE_MIN;
+ 622   6                          led_set_flashs(0, LED_POS_MAX, 0);//取消闪烁
+ 623   6                      }
+ 624   5      
+ 625   5                      //进入设置时间界面
+ 626   5                      if(page_menu_cnt == PAGE_MENU_STIME)
+ 627   5                      {
+ 628   6                          settime_page_cnt = SET_TIME_PAGE_MIN;
+ 629   6                          ds3231_read_time(&time_set);
+ 630   6                          //进入设置界面后，设置项闪烁
+ 631   6                          led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//闪烁
+ 632   6                      }
+ 633   5      
+ 634   5                      //进入设置日期界面
+ 635   5                      if(page_menu_cnt == PAGE_MENU_SDATE)
+ 636   5                      {
+ 637   6                          setdate_page_cnt = SET_DATE_PAGE_MIN;
+ 638   6                          ds3231_read_time(&date_set);
+ 639   6                          //进入设置界面后，设置项闪烁
+ 640   6                          led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//闪烁
+ 641   6                      }
+ 642   5      
+ 643   5                      
+ 644   5                      //进入系统设置界面
+ 645   5                      if(page_menu_cnt == PAGE_MENU_SYSCFG)
+ 646   5                      {
+ 647   6                          setsys_page_cnt = SET_SYSTEM_PAGE_MIN;
+ 648   6                          system_cfg_copy(&syscfg_set, &syscfg_t);
+ 649   6                          //进入设置界面后，设置项闪烁
+ 650   6                          led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//闪烁
+ 651   6                      }
+ 652   5      
+ 653   5                      //进入自动休眠设置界面
+ 654   5                      if(page_menu_cnt == PAGE_MENU_SATSLEEP)
+ 655   5                      {
+ 656   6                          setauto_sleep_cnt = SET_AUTO_SLEEP_MIN;
+ 657   6                          system_cfg_copy(&syscfg_set, &syscfg_t);
+ 658   6                          //进入设置界面后，设置项闪烁
+ 659   6                          led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//闪烁
+ 660   6                      }
+ 661   5                  }
+ 662   4                  break;
+ 663   4                  case KEY_BTN_SAVE_SETT://保存
+ 664   4                  {
+ 665   5                      if(page_menu_cnt == PAGE_MENU_STIME)
+ 666   5                      {
+ 667   6                          ds3231_read_time(&date_set);
+ 668   6                          time_set.year = date_set.year;
+ 669   6                          time_set.week = date_set.week;
+ 670   6                          time_set.month = date_set.month;
+ 671   6                          time_set.day = date_set.day;
+C51 COMPILER V9.59.0.0   MAIN                                                              05/06/2019 23:08:39 PAGE 12  
+
+ 672   6                          ds3231_set_time(&time_set);
+ 673   6                          //保存配置后，设置项停止闪烁
+ 674   6                          led_set_flashs(0, LED_POS_MAX, 0);//取消闪烁
+ 675   6                      }
+ 676   5      
+ 677   5                      if(page_menu_cnt == PAGE_MENU_SDATE)
+ 678   5                      {
+ 679   6                          ds3231_read_time(&time_set);
+ 680   6                          date_set.hour = time_set.hour;
+ 681   6                          date_set.minute = time_set.minute;
+ 682   6                          date_set.second = time_set.second;
+ 683   6                          ds3231_set_time(&date_set);
+ 684   6                          //保存配置后，设置项停止闪烁
+ 685   6                          led_set_flashs(0, LED_POS_MAX, 0);//取消闪烁
+ 686   6                      }
+ 687   5      
+ 688   5                      if(page_menu_cnt == PAGE_MENU_SYSCFG)
+ 689   5                      {
+ 690   6                          system_cfg_copy(&syscfg_t, &syscfg_set);
+ 691   6                          system_cfg_write(&syscfg_t);
+ 692   6                          system_cfg_apply(&syscfg_t);
+ 693   6                          //保存配置后，设置项停止闪烁
+ 694   6                          led_set_flashs(0, LED_POS_MAX, 0);//取消闪烁
+ 695   6                      }
+ 696   5      
+ 697   5                      if(page_menu_cnt == PAGE_MENU_SATSLEEP)
+ 698   5                      {
+ 699   6                          system_cfg_copy(&syscfg_t, &syscfg_set);
+ 700   6                          system_cfg_write(&syscfg_t);
+ 701   6                          //system_cfg_apply(&syscfg_t);
+ 702   6                          //保存配置后，设置项停止闪烁
+ 703   6                          led_set_flashs(0, LED_POS_MAX, 0);//取消闪烁
+ 704   6                      }
+ 705   5      
+ 706   5                      if(page_menu_cnt == PAGE_MENU_MAIN)
+ 707   5                      {
+ 708   6                          main_mode_cnt++;
+ 709   6                          if(main_mode_cnt >= MAIN_MODE_MAX)
+ 710   6                          {
+ 711   7                              main_mode_cnt = MAIN_MODE_MIN;
+ 712   7                          }
+ 713   6      
+ 714   6                          if(main_mode_cnt != MAIN_MODE_TIME)
+ 715   6                          {
+ 716   7                              main_mode_force = 1;
+ 717   7                          }
+ 718   6                      }
+ 719   5                  }
+ 720   4                  break;
+ 721   4                  case KEY_BTN_NEXT_ENTRY://下一个条目
+ 722   4                  {
+ 723   5                      if(page_menu_cnt == PAGE_MENU_MAIN)
+ 724   5                      {
+ 725   6                          if(main_mode_cnt == MAIN_MODE_TIME)
+ 726   6                          {
+ 727   7                              main_page_cnt++;
+ 728   7                              if(main_page_cnt >= MAIN_PAGE_MAX)
+ 729   7                              {
+ 730   8                                  main_page_cnt = MAIN_PAGE_MIN;
+ 731   8                              }
+ 732   7                          }
+ 733   6                      }
+C51 COMPILER V9.59.0.0   MAIN                                                              05/06/2019 23:08:39 PAGE 13  
+
+ 734   5                      if(page_menu_cnt == PAGE_MENU_STIME)
+ 735   5                      {
+ 736   6                          settime_page_cnt++;
+ 737   6                          if(settime_page_cnt >= SET_TIME_PAGE_MAX)
+ 738   6                          {
+ 739   7                              settime_page_cnt = SET_TIME_PAGE_MIN;
+ 740   7                          }
+ 741   6                      }
+ 742   5                      if(page_menu_cnt == PAGE_MENU_SDATE)
+ 743   5                      {
+ 744   6                          setdate_page_cnt++;
+ 745   6                          if(setdate_page_cnt >= SET_DATE_PAGE_MAX)
+ 746   6                          {
+ 747   7                              setdate_page_cnt = SET_DATE_PAGE_MIN;
+ 748   7                          }
+ 749   6                      }
+ 750   5                      if(page_menu_cnt == PAGE_MENU_SYSCFG)
+ 751   5                      {
+ 752   6                          setsys_page_cnt++;
+ 753   6                          if(setsys_page_cnt >= SET_SYSTEM_PAGE_MAX)
+ 754   6                          {
+ 755   7                              setsys_page_cnt = SET_SYSTEM_PAGE_MIN;
+ 756   7                          }
+ 757   6                      }
+ 758   5      
+ 759   5                      if(page_menu_cnt == PAGE_MENU_SATSLEEP)
+ 760   5                      {
+ 761   6                          setauto_sleep_cnt++;
+ 762   6                          if(setauto_sleep_cnt >= SET_AUTO_SLEEP_MAX)
+ 763   6                          {
+ 764   7                              setauto_sleep_cnt = SET_AUTO_SLEEP_MIN;
+ 765   7                          }
+ 766   6                      }
+ 767   5                  }
+ 768   4                  break;
+ 769   4                  case KEY_BTN_UP:
+ 770   4                  {
+ 771   5                      if(page_menu_cnt == PAGE_MENU_MAIN)
+ 772   5                      {
+ 773   6                          main_mode_cnt++;
+ 774   6                          if(main_mode_cnt >= MAIN_MODE_MAX)
+ 775   6                          {
+ 776   7                              main_mode_cnt = MAIN_MODE_MIN;
+ 777   7                          }
+ 778   6                      }
+ 779   5                      if((page_menu_cnt == PAGE_MENU_STIME) || 
+ 780   5                         (page_menu_cnt == PAGE_MENU_SDATE) || 
+ 781   5                         (page_menu_cnt == PAGE_MENU_SYSCFG) ||
+ 782   5                         (page_menu_cnt == PAGE_MENU_SATSLEEP))
+ 783   5                      {
+ 784   6                          set_oper = SET_OPER_ADD;
+ 785   6                          //设置界面中，设置项发生改变后，设置项闪烁
+ 786   6                          led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//闪烁
+ 787   6                      }
+ 788   5                  }
+ 789   4                  break;
+ 790   4                  case KEY_BTN_DWN:
+ 791   4                  {
+ 792   5                      if(page_menu_cnt == PAGE_MENU_MAIN)
+ 793   5                      {
+ 794   6                          main_mode_cnt--;
+ 795   6                          if(main_mode_cnt < MAIN_MODE_MIN)
+C51 COMPILER V9.59.0.0   MAIN                                                              05/06/2019 23:08:39 PAGE 14  
+
+ 796   6                          {
+ 797   7                              main_mode_cnt = MAIN_MODE_MAX-1;
+ 798   7                          }
+ 799   6                      }
+ 800   5                      if((page_menu_cnt == PAGE_MENU_STIME) || 
+ 801   5                         (page_menu_cnt == PAGE_MENU_SDATE) || 
+ 802   5                         (page_menu_cnt == PAGE_MENU_SYSCFG) ||
+ 803   5                         (page_menu_cnt == PAGE_MENU_SATSLEEP))
+ 804   5                      {
+ 805   6                          set_oper = SET_OPER_SUB;
+ 806   6                          //设置界面中，设置项发生改变后，设置项闪烁
+ 807   6                          led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//闪烁
+ 808   6                      }
+ 809   5                  }
+ 810   4                  break;
+ 811   4                  case KEY_BTN_DWN_LP:
+ 812   4                  {
+ 813   5                      if(page_menu_cnt == PAGE_MENU_MAIN)
+ 814   5                      {
+ 815   6                          main_mode_cnt--;
+ 816   6                          if(main_mode_cnt < MAIN_MODE_MIN)
+ 817   6                          {
+ 818   7                              main_mode_cnt = MAIN_MODE_MAX-1;
+ 819   7                          }
+ 820   6      
+ 821   6                          if(main_mode_cnt != MAIN_MODE_TIME)
+ 822   6                          {
+ 823   7                              main_mode_force = 1;
+ 824   7                          }
+ 825   6                      }
+ 826   5                  }
+ 827   4                  break;
+ 828   4                  case KEY_BTN_POWER_OFF:
+ 829   4                  {
+ 830   5                      if(page_menu_cnt == PAGE_MENU_MAIN)
+ 831   5                      {
+ 832   6                          page_menu_cnt = PAGE_MENU_POWER;
+ 833   6                          main_autoexit_timer = 0;
+ 834   6                          led_close_door(30);
+ 835   6                      }
+ 836   5                  }
+ 837   4                  break;
+ 838   4                  default:
+ 839   4                      break;
+ 840   4                  }
+ 841   3              }
+ 842   2      
+ 843   2              main_autoexit_timer++;
+ 844   2      
+ 845   2              if(main_mode_force)
+ 846   2              {
+ 847   3                  main_autoexit_timer = 0;
+ 848   3              }
+ 849   2      
+ 850   2              if(main_autoexit_timer > DEF_SYS_AUTOEXIT_TMR)
+ 851   2              {
+ 852   3                  page_menu_cnt = PAGE_MENU_MAIN;//回退到主界面
+ 853   3                  main_mode_cnt = MAIN_MODE_TIME;//回退到计时模式
+ 854   3                  main_page_cnt = MAIN_PAGE_HHMM;//回退到时间模式
+ 855   3                  main_autoexit_timer = 0;
+ 856   3              }
+ 857   2      
+C51 COMPILER V9.59.0.0   MAIN                                                              05/06/2019 23:08:39 PAGE 15  
+
+ 858   2              if(page_menu_cnt == PAGE_MENU_MAIN)
+ 859   2              {
+ 860   3                  led_set_flashs(0, LED_POS_MAX, 0);//菜单界面会设置闪烁，这里取消闪烁
+ 861   3              }
+ 862   2      
+ 863   2              ds3231_read_time(&time_t);
+ 864   2      
+ 865   2              switch(page_menu_cnt)
+ 866   2              {
+ 867   3              case PAGE_MENU_MAIN:
+ 868   3                  switch(main_mode_cnt)
+ 869   3                  {
+ 870   4                  case MAIN_MODE_TIME:
+ 871   4                      show_main_page(&time_t, main_page_cnt);
+ 872   4                      break;
+ 873   4                  case MAIN_MODE_TEMP:
+ 874   4                      show_temp_page();
+ 875   4                      break;
+ 876   4                  case MAIN_MODE_NONLI:
+ 877   4                      show_nonli_page(&time_t);
+ 878   4                      break;
+ 879   4                  }
+ 880   3                  if(syscfg_t.autosleep.on)
+ 881   3                  {
+ 882   4                      if((time_t.hour == syscfg_t.autosleep.s_hour) &&
+ 883   4                         (time_t.minute == syscfg_t.autosleep.s_min))
+ 884   4                      {
+ 885   5                          page_menu_cnt = PAGE_MENU_POWER;
+ 886   5                          main_autoexit_timer = 0;
+ 887   5                          led_close_door(30);
+ 888   5                      }
+ 889   4                  }
+ 890   3                  break;
+ 891   3              case PAGE_MENU_STIME:
+ 892   3                  show_time_set_page(&time_set, settime_page_cnt, set_oper);
+ 893   3                  break;
+ 894   3              case PAGE_MENU_SDATE:
+ 895   3                  show_date_set_page(&date_set, setdate_page_cnt, set_oper);
+ 896   3                  break;
+ 897   3              case PAGE_MENU_SYSCFG:
+ 898   3                  show_system_set_page(&syscfg_set, setsys_page_cnt, set_oper);
+ 899   3                  break;
+ 900   3              case PAGE_MENU_SATSLEEP:
+ 901   3                  show_autosleep_set_page(&syscfg_set, setauto_sleep_cnt, set_oper);
+ 902   3                  break;
+ 903   3              case PAGE_MENU_POWER:
+ 904   3                  led_clear(0);
+ 905   3                  led_close();
+ 906   3                  main_autoexit_timer = 0;
+ 907   3                  if(syscfg_t.autosleep.on)
+ 908   3                  {
+ 909   4                      if((time_t.hour == syscfg_t.autosleep.e_hour) &&
+ 910   4                         (time_t.minute == syscfg_t.autosleep.e_min))
+ 911   4                      {
+ 912   5                          led_open();
+ 913   5                          page_menu_cnt = PAGE_MENU_MAIN;
+ 914   5                          main_autoexit_timer = DEF_SYS_AUTOEXIT_TMR+1;
+ 915   5                          led_open_door(30);
+ 916   5                      }
+ 917   4                  }
+ 918   3                  break;
+ 919   3              default:
+C51 COMPILER V9.59.0.0   MAIN                                                              05/06/2019 23:08:39 PAGE 16  
+
+ 920   3                  break;
+ 921   3              }
+ 922   2      
+ 923   2              set_oper = SET_OPER_MIN;
+ 924   2      
+ 925   2              led_update();
+ 926   2              delay_xms(DEF_SYS_LED_FPS);
+ 927   2          }
+ 928   1      #endif
+ 929   1      
+ 930   1      #if 0
+                  uint8_t temp_str[LED_POS_MAX+1] = {0};
+                  uint16 temp = 0;
+              
+                  key_init();
+                  led_init();
+                  ds3231_init();
+              
+                  led_set_mirror(DEF_SYS_LED_MIRROR);
+                  key_set_mirror(DEF_SYS_LED_MIRROR);
+                  led_open_door(50);
+                  led_close_door(50);
+              
+                  while(1)
+                  {
+                      if(ds18b20_convert(&temp))
+                      {
+                          sprintf(temp_str, "%04s", "EEEE");
+                      }
+                      else
+                      {
+                          sprintf(temp_str, "%04X", temp);
+                      }
+                      temp_str[LED_POS_MAX] = 0;
+                      led_puts(0, temp_str, 1); // 摄氏度
+                      led_putb(1, LED_SEGB_SET(LED_SEGB_DP), 1, 1);//小数点
+                      led_update();
+                      delay_xms(100);
+                  }
+              #endif
+ 960   1      
+ 961   1      #if 0
+                  uint8 sign = 0, disp_temp = 0;
+                  uint16 interger = 0, decimal = 0;
+              
+                  key_init();
+                  led_init();
+                  ds3231_init();
+              
+                  led_set_mirror(DEF_SYS_LED_MIRROR);
+                  key_set_mirror(DEF_SYS_LED_MIRROR);
+                  led_open_door(50);
+                  led_close_door(50);
+              
+                  while(1)
+                  {
+                      if(ds18b20_get_temp(&sign, &interger, &decimal) == RTN_OK)
+                      {
+                          if(sign)
+                          {
+                              disp_temp = ((decimal >= 5) ? (interger + 1) : interger);
+                              disp_temp %= 100;
+C51 COMPILER V9.59.0.0   MAIN                                                              05/06/2019 23:08:39 PAGE 17  
+
+                              led_puti(0, LED_SEG_HL, 1);
+                              led_puti(1, disp_temp / 10, 1);
+                              led_puti(2, disp_temp % 10, 1);
+                          }
+                          else
+                          {
+                              disp_temp = (interger % 100);
+                              led_puti(0, disp_temp / 10, 1);
+                              led_puti(1, disp_temp % 10, 1);
+                              led_puti(2, decimal % 10, 1);
+                              if(led_get_mirror())
+                              {
+                                  led_putb(2, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
+                              }
+                              else
+                              {
+                                  led_putb(1, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
+                              }
+                          }
+                          led_puti(3, LED_SEG_CEL, 1); // 摄氏度
+                      }
+                      led_update();
+                      delay_xms(100);
+                  }
+              #endif
+1007   1      
+1008   1      #if 0
+                  led_set_mirror(1);
+              
+                  led_open_door();
+                  led_close_door();
+              
+                  led_clear(0);
+              
+                  led_set_flashc(1, 5);
+                  led_set_flashc(3, 5);
+                  led_puts(0, "ABCD", 1);
+              
+                  while(1)
+                  {
+                      led_update();
+                      delay_xms(100);
+                  }
+              #endif
+1026   1      
+1027   1      #if 0
+              
+                  char i = 0, j = 0;
+              
+                  uchar led_segb[4] =
+                  {
+                      LED_SEGB_SET(LED_SEGB_A) | LED_SEGB_SET(LED_SEGB_D) | LED_SEGB_SET(LED_SEGB_G),
+                      LED_SEGB_SET(LED_SEGB_B) | LED_SEGB_SET(LED_SEGB_C),
+                      LED_SEGB_SET(LED_SEGB_E) | LED_SEGB_SET(LED_SEGB_F),
+                      LED_SEGB_SET(LED_SEGB_G) | LED_SEGB_SET(LED_SEGB_B) | LED_SEGB_SET(LED_SEGB_C) | LED_SEGB_SET(LED_
+             -SEGB_DP),
+                  };
+              
+                  led_init();
+                  while(1)
+                  {
+                      led_clear(0);
+C51 COMPILER V9.59.0.0   MAIN                                                              05/06/2019 23:08:39 PAGE 18  
+
+                      led_update();
+              
+                      for(i = 0; i < LED_POS_MAX; i++)
+                      {
+                          for(j = 0; j < LED_SEGB_MAX; j++)
+                          {
+                              led_set_point(i, j, 1);
+                              led_update();
+                              delay_xms(50);
+                          }
+                      }
+                      for(i = LED_POS_MAX - 1; i >= 0; i--)
+                      {
+                          for(j = LED_SEGB_MAX - 1; j >= 0; j--)
+                          {
+                              led_set_point(i, j, 0);
+                              led_update();
+                              delay_xms(50);
+                          }
+                      }
+              
+                      led_clear(0);
+                      led_puts(0, "1234", 1);
+                      led_update();
+                      delay_xms(1000);
+              
+                      led_puts(0, "ABCD", 1);
+                      led_update();
+                      delay_xms(1000);
+              
+                      led_clear(0);
+              
+                      for(i = 0; i < LED_POS_MAX; i++)
+                      {
+                          j = ((i >= 2) ? 0 : 1);
+                          led_putb(i, led_segb[0], 1, j);
+                      }
+                      led_update();
+                      delay_xms(1000);
+                      for(i = 0; i < LED_POS_MAX; i++)
+                      {
+                          j = ((i >= 2) ? 0 : 1);
+                          led_putb(i, led_segb[1], 1, j);
+                      }
+                      led_update();
+                      delay_xms(1000);
+                      for(i = 0; i < LED_POS_MAX; i++)
+                      {
+                          j = ((i >= 2) ? 0 : 1);
+                          led_putb(i, led_segb[2], 1, j);
+                      }
+                      led_update();
+                      delay_xms(1000);
+                      for(i = 0; i < LED_POS_MAX; i++)
+                      {
+                          j = ((i >= 2) ? 0 : 1);
+                          led_putb(i, led_segb[3], 1, j);
+                      }
+                      led_update();
+                      delay_xms(1000);
+                  }
+              #endif
+C51 COMPILER V9.59.0.0   MAIN                                                              05/06/2019 23:08:39 PAGE 19  
+
+1105   1      
+1106   1      
+1107   1      #if 0
+                  uint8_t sign = 0;
+                  uint16_t interger = 0;
+                  uint16_t decimal = 0;
+                  uchar temp_str[LED_POS_MAX] = {0};
+                  led_init();
+                  ds18b20_init();
+                  led_puts(0, "A1B2", 1);
+                  led_update();
+              
+                  while(1)
+                  {
+                      ds18b20_get_temp(&sign, &interger, &decimal);
+                      sprintf(temp_str, "%04d", interger);
+                      led_puts(0, temp_str, 1);
+                      led_update();
+                      delay_xms(100);
+                  }
+              #endif
+1126   1      }
+1127          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   3847    ----
+   CONSTANT SIZE    =     66    ----
+   XDATA SIZE       =   ----      66
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      79
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
