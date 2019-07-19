@@ -1,6 +1,7 @@
 # MIniClock 使用说明
 
-![MiniClock](./media/MiniClock1.png)
+![MiniClock](./media/miniclock_a0.png)
+![MiniClock](./media/miniclock_a1.png)
 
 ## 查看
 
