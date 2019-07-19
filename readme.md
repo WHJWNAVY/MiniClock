@@ -1,5 +1,7 @@
 # MIniClock 使用说明
 
+![MiniClock](./media/MiniClock1.png)
+
 ## 查看
 
 ### 查看时间,日历
