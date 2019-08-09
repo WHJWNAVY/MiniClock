@@ -14,20 +14,20 @@
 #define DEF_SYS_LED_LIGHT    (5u)
 #define DEF_SYS_AUTO_SLEEP   (1u)
 
-//≤Àµ•¡–±Ì
+//ËèúÂçïÂàóË°®
 typedef enum page_mode_e
 {
     PAGE_MENU_MIN = 0x1Au,
-    PAGE_MENU_MAIN = PAGE_MENU_MIN,//÷˜ΩÁ√Ê
-    PAGE_MENU_STIME,// ±º‰…Ë÷√ΩÁ√Ê
-    PAGE_MENU_SDATE,//»’∆⁄…Ë÷√ΩÁ√Ê
-    PAGE_MENU_SATSLEEP,//◊‘∂Ø–›√ﬂ…Ë÷√
-    PAGE_MENU_SYSCFG,//œµÕ≥…Ë÷√
+    PAGE_MENU_MAIN = PAGE_MENU_MIN,//‰∏ªÁïåÈù¢
+    PAGE_MENU_STIME,//Êó∂Èó¥ËÆæÁΩÆÁïåÈù¢
+    PAGE_MENU_SDATE,//Êó•ÊúüËÆæÁΩÆÁïåÈù¢
+    PAGE_MENU_SATSLEEP,//Ëá™Âä®‰ºëÁú†ËÆæÁΩÆ
+    PAGE_MENU_SYSCFG,//Á≥ªÁªüËÆæÁΩÆ
     PAGE_MENU_MAX,
     PAGE_MENU_POWER,
 } page_mode_e;
 
-//º∆ ±ƒ£ Ω
+//ËÆ°Êó∂Ê®°Âºè
 typedef enum main_mode_e
 {
     MAIN_MODE_MIN = 0x20u,
@@ -37,7 +37,7 @@ typedef enum main_mode_e
     MAIN_MODE_MAX,
 } main_mode_t;
 
-//÷˜“≥«–ªª
+//‰∏ªÈ°µÂàáÊç¢
 typedef enum main_page_e
 {
     MAIN_PAGE_MIN = 0x2Au,
@@ -50,7 +50,7 @@ typedef enum main_page_e
 } main_page_t;
 
 
-// ±º‰…Ë÷√ΩÁ√Ê
+//Êó∂Èó¥ËÆæÁΩÆÁïåÈù¢
 typedef enum set_time_page_e
 {
     SET_TIME_PAGE_MIN = 0x3Au,
@@ -60,7 +60,7 @@ typedef enum set_time_page_e
     SET_TIME_PAGE_MAX,
 } set_time_page_t;
 
-//»’∆⁄…Ë÷√ΩÁ√Ê
+//Êó•ÊúüËÆæÁΩÆÁïåÈù¢
 typedef enum set_date_page_e
 {
     SET_DATE_PAGE_MIN = 0x4Au,
@@ -79,7 +79,7 @@ typedef enum set_system_page_e
     SET_SYSTEM_PAGE_MAX,
 }set_system_page_t;
 
-//º”ºı≤Ÿ◊˜
+//Âä†ÂáèÊìç‰Ωú
 typedef enum set_oper_e
 {
     SET_OPER_MIN = 0x5Au,
@@ -88,7 +88,7 @@ typedef enum set_oper_e
     SET_OPER_MAX,
 } set_oper_t;
 
-//»’∆⁄…Ë÷√ΩÁ√Ê
+//Êó•ÊúüËÆæÁΩÆÁïåÈù¢
 typedef enum set_auto_sleep_e
 {
     SET_AUTO_SLEEP_MIN = 0x6Au,
@@ -188,7 +188,7 @@ void _menu_data_deal_(uchar *dat, uchar op, uchar max, uchar min)
     if((op == SET_OPER_ADD) || (op == SET_OPER_SUB))
     {
         data_t = (char)(*dat);
-        if(op == SET_OPER_ADD)//º”
+        if(op == SET_OPER_ADD)//Âä†
         {
             data_t++;
             if(data_t > max)
@@ -196,7 +196,7 @@ void _menu_data_deal_(uchar *dat, uchar op, uchar max, uchar min)
                 data_t = min;
             }
         }
-        else if(op == SET_OPER_SUB)///ºı
+        else if(op == SET_OPER_SUB)///Âáè
         {
             data_t--;
             if(data_t < min)
@@ -492,22 +492,22 @@ void show_temp_page(void)
 
     if(ds18b20_get_temp(&sign, &interger, &decimal) == RTN_OK)
     {
-        if(sign)//∏∫ ˝
+        if(sign)//Ë¥üÊï∞
         {
             disp_temp = ((decimal >= 5) ? (interger + 1) : interger);
             disp_temp %= 100;
-            led_puti(0, LED_SEG_HL, 1);//∏∫∫≈
-            led_puti(1, disp_temp / 10, 1);// ÆŒª
-            led_puti(2, disp_temp % 10, 1);//∏ˆŒª
+            led_puti(0, LED_SEG_HL, 1);//Ë¥üÂè∑
+            led_puti(1, disp_temp / 10, 1);//ÂçÅ‰Ωç
+            led_puti(2, disp_temp % 10, 1);//‰∏™‰Ωç
         }
-        else//’˝ ˝
+        else//Ê≠£Êï∞
         {
             disp_temp = (interger % 100);
-            led_puti(0, disp_temp / 10, 1);// ÆŒª
-            led_puti(1, disp_temp % 10, 1);//∏ˆŒª
-            led_puti(2, decimal % 10, 1);//–° ˝
-            if(led_get_mirror())//–° ˝µ„
-            {//»Áπ˚æµœÒœ‘ æ£¨‘Ú–° ˝µ„”¶∏√∫Û“∆“ªŒª
+            led_puti(0, disp_temp / 10, 1);//ÂçÅ‰Ωç
+            led_puti(1, disp_temp % 10, 1);//‰∏™‰Ωç
+            led_puti(2, decimal % 10, 1);//Â∞èÊï∞
+            if(led_get_mirror())//Â∞èÊï∞ÁÇπ
+            {//Â¶ÇÊûúÈïúÂÉèÊòæÁ§∫ÔºåÂàôÂ∞èÊï∞ÁÇπÂ∫îËØ•ÂêéÁßª‰∏Ä‰Ωç
                 led_putb(2, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
             }
             else
@@ -515,7 +515,7 @@ void show_temp_page(void)
                 led_putb(1, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
             }
         }
-        led_puti(3, LED_SEG_CEL, 1); // …„ œ∂»
+        led_puti(3, LED_SEG_CEL, 1); // ÊëÑÊ∞èÂ∫¶
     }
 }
 
@@ -534,7 +534,7 @@ void show_nonli_page(rtc_time_t* time_t)
         return;
     }
 
-    //Œ™¡À«¯∑÷£¨œ‘ æÀƒ∏ˆµ„
+    //‰∏∫‰∫ÜÂå∫ÂàÜÔºåÊòæÁ§∫Âõõ‰∏™ÁÇπ
     led_puti(0, nonli_t.month / 10, 1);
     led_puti(1, nonli_t.month % 10, 1);
     led_puti(2, nonli_t.day / 10, 1);
@@ -548,7 +548,6 @@ void show_nonli_page(rtc_time_t* time_t)
 
 void main(void)
 {
-#if 1
     uchar i = 0, j = 0;
     uchar key_code = 0;
     uchar page_menu_cnt = PAGE_MENU_MIN;
@@ -595,7 +594,7 @@ void main(void)
             main_autoexit_timer = 0;
             main_mode_force = 0;
 
-            //∞¥»Œ“‚º¸ÕÀ≥ˆ–›√ﬂƒ£ Ω
+            //Êåâ‰ªªÊÑèÈîÆÈÄÄÂá∫‰ºëÁú†Ê®°Âºè
             if(page_menu_cnt == PAGE_MENU_POWER)
             {
                 led_open();
@@ -607,7 +606,7 @@ void main(void)
             
             switch(key_code)
             {
-            case KEY_BTN_NEXT_PAGE://œ¬“ª∏ˆΩÁ√Ê
+            case KEY_BTN_NEXT_PAGE://‰∏ã‰∏Ä‰∏™ÁïåÈù¢
             {
                 page_menu_cnt++;
                 if(page_menu_cnt >= PAGE_MENU_MAX)
@@ -619,48 +618,48 @@ void main(void)
                 {
                     main_mode_cnt = MAIN_MODE_MIN;
                     main_page_cnt = MAIN_PAGE_MIN;
-                    led_set_flashs(0, LED_POS_MAX, 0);//»°œ˚…¡À∏
+                    led_set_flashs(0, LED_POS_MAX, 0);//ÂèñÊ∂àÈó™ÁÉÅ
                 }
 
-                //Ω¯»Î…Ë÷√ ±º‰ΩÁ√Ê
+                //ËøõÂÖ•ËÆæÁΩÆÊó∂Èó¥ÁïåÈù¢
                 if(page_menu_cnt == PAGE_MENU_STIME)
                 {
                     settime_page_cnt = SET_TIME_PAGE_MIN;
                     ds3231_read_time(&time_set);
-                    //Ω¯»Î…Ë÷√ΩÁ√Ê∫Û£¨…Ë÷√œÓ…¡À∏
-                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//…¡À∏
+                    //ËøõÂÖ•ËÆæÁΩÆÁïåÈù¢ÂêéÔºåËÆæÁΩÆÈ°πÈó™ÁÉÅ
+                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//Èó™ÁÉÅ
                 }
 
-                //Ω¯»Î…Ë÷√»’∆⁄ΩÁ√Ê
+                //ËøõÂÖ•ËÆæÁΩÆÊó•ÊúüÁïåÈù¢
                 if(page_menu_cnt == PAGE_MENU_SDATE)
                 {
                     setdate_page_cnt = SET_DATE_PAGE_MIN;
                     ds3231_read_time(&date_set);
-                    //Ω¯»Î…Ë÷√ΩÁ√Ê∫Û£¨…Ë÷√œÓ…¡À∏
-                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//…¡À∏
+                    //ËøõÂÖ•ËÆæÁΩÆÁïåÈù¢ÂêéÔºåËÆæÁΩÆÈ°πÈó™ÁÉÅ
+                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//Èó™ÁÉÅ
                 }
 
                 
-                //Ω¯»ÎœµÕ≥…Ë÷√ΩÁ√Ê
+                //ËøõÂÖ•Á≥ªÁªüËÆæÁΩÆÁïåÈù¢
                 if(page_menu_cnt == PAGE_MENU_SYSCFG)
                 {
                     setsys_page_cnt = SET_SYSTEM_PAGE_MIN;
                     system_cfg_copy(&syscfg_set, &syscfg_t);
-                    //Ω¯»Î…Ë÷√ΩÁ√Ê∫Û£¨…Ë÷√œÓ…¡À∏
-                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//…¡À∏
+                    //ËøõÂÖ•ËÆæÁΩÆÁïåÈù¢ÂêéÔºåËÆæÁΩÆÈ°πÈó™ÁÉÅ
+                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//Èó™ÁÉÅ
                 }
 
-                //Ω¯»Î◊‘∂Ø–›√ﬂ…Ë÷√ΩÁ√Ê
+                //ËøõÂÖ•Ëá™Âä®‰ºëÁú†ËÆæÁΩÆÁïåÈù¢
                 if(page_menu_cnt == PAGE_MENU_SATSLEEP)
                 {
                     setauto_sleep_cnt = SET_AUTO_SLEEP_MIN;
                     system_cfg_copy(&syscfg_set, &syscfg_t);
-                    //Ω¯»Î…Ë÷√ΩÁ√Ê∫Û£¨…Ë÷√œÓ…¡À∏
-                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//…¡À∏
+                    //ËøõÂÖ•ËÆæÁΩÆÁïåÈù¢ÂêéÔºåËÆæÁΩÆÈ°πÈó™ÁÉÅ
+                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//Èó™ÁÉÅ
                 }
             }
             break;
-            case KEY_BTN_SAVE_SETT://±£¥Ê
+            case KEY_BTN_SAVE_SETT://‰øùÂ≠ò
             {
                 if(page_menu_cnt == PAGE_MENU_STIME)
                 {
@@ -670,8 +669,8 @@ void main(void)
                     time_set.month = date_set.month;
                     time_set.day = date_set.day;
                     ds3231_set_time(&time_set);
-                    //±£¥Ê≈‰÷√∫Û£¨…Ë÷√œÓÕ£÷π…¡À∏
-                    led_set_flashs(0, LED_POS_MAX, 0);//»°œ˚…¡À∏
+                    //‰øùÂ≠òÈÖçÁΩÆÂêéÔºåËÆæÁΩÆÈ°πÂÅúÊ≠¢Èó™ÁÉÅ
+                    led_set_flashs(0, LED_POS_MAX, 0);//ÂèñÊ∂àÈó™ÁÉÅ
                 }
 
                 if(page_menu_cnt == PAGE_MENU_SDATE)
@@ -681,8 +680,8 @@ void main(void)
                     date_set.minute = time_set.minute;
                     date_set.second = time_set.second;
                     ds3231_set_time(&date_set);
-                    //±£¥Ê≈‰÷√∫Û£¨…Ë÷√œÓÕ£÷π…¡À∏
-                    led_set_flashs(0, LED_POS_MAX, 0);//»°œ˚…¡À∏
+                    //‰øùÂ≠òÈÖçÁΩÆÂêéÔºåËÆæÁΩÆÈ°πÂÅúÊ≠¢Èó™ÁÉÅ
+                    led_set_flashs(0, LED_POS_MAX, 0);//ÂèñÊ∂àÈó™ÁÉÅ
                 }
 
                 if(page_menu_cnt == PAGE_MENU_SYSCFG)
@@ -690,8 +689,8 @@ void main(void)
                     system_cfg_copy(&syscfg_t, &syscfg_set);
                     system_cfg_write(&syscfg_t);
                     system_cfg_apply(&syscfg_t);
-                    //±£¥Ê≈‰÷√∫Û£¨…Ë÷√œÓÕ£÷π…¡À∏
-                    led_set_flashs(0, LED_POS_MAX, 0);//»°œ˚…¡À∏
+                    //‰øùÂ≠òÈÖçÁΩÆÂêéÔºåËÆæÁΩÆÈ°πÂÅúÊ≠¢Èó™ÁÉÅ
+                    led_set_flashs(0, LED_POS_MAX, 0);//ÂèñÊ∂àÈó™ÁÉÅ
                 }
 
                 if(page_menu_cnt == PAGE_MENU_SATSLEEP)
@@ -699,8 +698,8 @@ void main(void)
                     system_cfg_copy(&syscfg_t, &syscfg_set);
                     system_cfg_write(&syscfg_t);
                     //system_cfg_apply(&syscfg_t);
-                    //±£¥Ê≈‰÷√∫Û£¨…Ë÷√œÓÕ£÷π…¡À∏
-                    led_set_flashs(0, LED_POS_MAX, 0);//»°œ˚…¡À∏
+                    //‰øùÂ≠òÈÖçÁΩÆÂêéÔºåËÆæÁΩÆÈ°πÂÅúÊ≠¢Èó™ÁÉÅ
+                    led_set_flashs(0, LED_POS_MAX, 0);//ÂèñÊ∂àÈó™ÁÉÅ
                 }
 
                 if(page_menu_cnt == PAGE_MENU_MAIN)
@@ -718,7 +717,7 @@ void main(void)
                 }
             }
             break;
-            case KEY_BTN_NEXT_ENTRY://œ¬“ª∏ˆÃıƒø
+            case KEY_BTN_NEXT_ENTRY://‰∏ã‰∏Ä‰∏™Êù°ÁõÆ
             {
                 if(page_menu_cnt == PAGE_MENU_MAIN)
                 {
@@ -782,8 +781,8 @@ void main(void)
                    (page_menu_cnt == PAGE_MENU_SATSLEEP))
                 {
                     set_oper = SET_OPER_ADD;
-                    //…Ë÷√ΩÁ√Ê÷–£¨…Ë÷√œÓ∑¢…˙∏ƒ±‰∫Û£¨…Ë÷√œÓ…¡À∏
-                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//…¡À∏
+                    //ËÆæÁΩÆÁïåÈù¢‰∏≠ÔºåËÆæÁΩÆÈ°πÂèëÁîüÊîπÂèòÂêéÔºåËÆæÁΩÆÈ°πÈó™ÁÉÅ
+                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//Èó™ÁÉÅ
                 }
             }
             break;
@@ -803,8 +802,8 @@ void main(void)
                    (page_menu_cnt == PAGE_MENU_SATSLEEP))
                 {
                     set_oper = SET_OPER_SUB;
-                    //…Ë÷√ΩÁ√Ê÷–£¨…Ë÷√œÓ∑¢…˙∏ƒ±‰∫Û£¨…Ë÷√œÓ…¡À∏
-                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//…¡À∏
+                    //ËÆæÁΩÆÁïåÈù¢‰∏≠ÔºåËÆæÁΩÆÈ°πÂèëÁîüÊîπÂèòÂêéÔºåËÆæÁΩÆÈ°πÈó™ÁÉÅ
+                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//Èó™ÁÉÅ
                 }
             }
             break;
@@ -849,15 +848,15 @@ void main(void)
 
         if(main_autoexit_timer > DEF_SYS_AUTOEXIT_TMR)
         {
-            page_menu_cnt = PAGE_MENU_MAIN;//ªÿÕÀµΩ÷˜ΩÁ√Ê
-            main_mode_cnt = MAIN_MODE_TIME;//ªÿÕÀµΩº∆ ±ƒ£ Ω
-            main_page_cnt = MAIN_PAGE_HHMM;//ªÿÕÀµΩ ±º‰ƒ£ Ω
+            page_menu_cnt = PAGE_MENU_MAIN;//ÂõûÈÄÄÂà∞‰∏ªÁïåÈù¢
+            main_mode_cnt = MAIN_MODE_TIME;//ÂõûÈÄÄÂà∞ËÆ°Êó∂Ê®°Âºè
+            main_page_cnt = MAIN_PAGE_HHMM;//ÂõûÈÄÄÂà∞Êó∂Èó¥Ê®°Âºè
             main_autoexit_timer = 0;
         }
 
         if(page_menu_cnt == PAGE_MENU_MAIN)
         {
-            led_set_flashs(0, LED_POS_MAX, 0);//≤Àµ•ΩÁ√Êª·…Ë÷√…¡À∏£¨’‚¿Ô»°œ˚…¡À∏
+            led_set_flashs(0, LED_POS_MAX, 0);//ËèúÂçïÁïåÈù¢‰ºöËÆæÁΩÆÈó™ÁÉÅÔºåËøôÈáåÂèñÊ∂àÈó™ÁÉÅ
         }
 
         ds3231_read_time(&time_t);
@@ -925,203 +924,5 @@ void main(void)
         led_update();
         delay_xms(DEF_SYS_LED_FPS);
     }
-#endif
-
-#if 0
-    uint8_t temp_str[LED_POS_MAX+1] = {0};
-    uint16 temp = 0;
-
-    key_init();
-    led_init();
-    ds3231_init();
-
-    led_set_mirror(DEF_SYS_LED_MIRROR);
-    key_set_mirror(DEF_SYS_LED_MIRROR);
-    led_open_door(50);
-    led_close_door(50);
-
-    while(1)
-    {
-        if(ds18b20_convert(&temp))
-        {
-            sprintf(temp_str, "%04s", "EEEE");
-        }
-        else
-        {
-            sprintf(temp_str, "%04X", temp);
-        }
-        temp_str[LED_POS_MAX] = 0;
-        led_puts(0, temp_str, 1); // …„ œ∂»
-        led_putb(1, LED_SEGB_SET(LED_SEGB_DP), 1, 1);//–° ˝µ„
-        led_update();
-        delay_xms(100);
-    }
-#endif
-
-#if 0
-    uint8 sign = 0, disp_temp = 0;
-    uint16 interger = 0, decimal = 0;
-
-    key_init();
-    led_init();
-    ds3231_init();
-
-    led_set_mirror(DEF_SYS_LED_MIRROR);
-    key_set_mirror(DEF_SYS_LED_MIRROR);
-    led_open_door(50);
-    led_close_door(50);
-
-    while(1)
-    {
-        if(ds18b20_get_temp(&sign, &interger, &decimal) == RTN_OK)
-        {
-            if(sign)
-            {
-                disp_temp = ((decimal >= 5) ? (interger + 1) : interger);
-                disp_temp %= 100;
-                led_puti(0, LED_SEG_HL, 1);
-                led_puti(1, disp_temp / 10, 1);
-                led_puti(2, disp_temp % 10, 1);
-            }
-            else
-            {
-                disp_temp = (interger % 100);
-                led_puti(0, disp_temp / 10, 1);
-                led_puti(1, disp_temp % 10, 1);
-                led_puti(2, decimal % 10, 1);
-                if(led_get_mirror())
-                {
-                    led_putb(2, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
-                }
-                else
-                {
-                    led_putb(1, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
-                }
-            }
-            led_puti(3, LED_SEG_CEL, 1); // …„ œ∂»
-        }
-        led_update();
-        delay_xms(100);
-    }
-#endif
-
-#if 0
-    led_set_mirror(1);
-
-    led_open_door();
-    led_close_door();
-
-    led_clear(0);
-
-    led_set_flashc(1, 5);
-    led_set_flashc(3, 5);
-    led_puts(0, "ABCD", 1);
-
-    while(1)
-    {
-        led_update();
-        delay_xms(100);
-    }
-#endif
-
-#if 0
-
-    char i = 0, j = 0;
-
-    uchar led_segb[4] =
-    {
-        LED_SEGB_SET(LED_SEGB_A) | LED_SEGB_SET(LED_SEGB_D) | LED_SEGB_SET(LED_SEGB_G),
-        LED_SEGB_SET(LED_SEGB_B) | LED_SEGB_SET(LED_SEGB_C),
-        LED_SEGB_SET(LED_SEGB_E) | LED_SEGB_SET(LED_SEGB_F),
-        LED_SEGB_SET(LED_SEGB_G) | LED_SEGB_SET(LED_SEGB_B) | LED_SEGB_SET(LED_SEGB_C) | LED_SEGB_SET(LED_SEGB_DP),
-    };
-
-    led_init();
-    while(1)
-    {
-        led_clear(0);
-        led_update();
-
-        for(i = 0; i < LED_POS_MAX; i++)
-        {
-            for(j = 0; j < LED_SEGB_MAX; j++)
-            {
-                led_set_point(i, j, 1);
-                led_update();
-                delay_xms(50);
-            }
-        }
-        for(i = LED_POS_MAX - 1; i >= 0; i--)
-        {
-            for(j = LED_SEGB_MAX - 1; j >= 0; j--)
-            {
-                led_set_point(i, j, 0);
-                led_update();
-                delay_xms(50);
-            }
-        }
-
-        led_clear(0);
-        led_puts(0, "1234", 1);
-        led_update();
-        delay_xms(1000);
-
-        led_puts(0, "ABCD", 1);
-        led_update();
-        delay_xms(1000);
-
-        led_clear(0);
-
-        for(i = 0; i < LED_POS_MAX; i++)
-        {
-            j = ((i >= 2) ? 0 : 1);
-            led_putb(i, led_segb[0], 1, j);
-        }
-        led_update();
-        delay_xms(1000);
-        for(i = 0; i < LED_POS_MAX; i++)
-        {
-            j = ((i >= 2) ? 0 : 1);
-            led_putb(i, led_segb[1], 1, j);
-        }
-        led_update();
-        delay_xms(1000);
-        for(i = 0; i < LED_POS_MAX; i++)
-        {
-            j = ((i >= 2) ? 0 : 1);
-            led_putb(i, led_segb[2], 1, j);
-        }
-        led_update();
-        delay_xms(1000);
-        for(i = 0; i < LED_POS_MAX; i++)
-        {
-            j = ((i >= 2) ? 0 : 1);
-            led_putb(i, led_segb[3], 1, j);
-        }
-        led_update();
-        delay_xms(1000);
-    }
-#endif
-
-
-#if 0
-    uint8_t sign = 0;
-    uint16_t interger = 0;
-    uint16_t decimal = 0;
-    uchar temp_str[LED_POS_MAX] = {0};
-    led_init();
-    ds18b20_init();
-    led_puts(0, "A1B2", 1);
-    led_update();
-
-    while(1)
-    {
-        ds18b20_get_temp(&sign, &interger, &decimal);
-        sprintf(temp_str, "%04d", interger);
-        led_puts(0, temp_str, 1);
-        led_update();
-        delay_xms(100);
-    }
-#endif
 }
 
