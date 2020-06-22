@@ -3,9 +3,18 @@
 ![MiniClock](./media/miniclock_a0.png)
 ![MiniClock](./media/miniclock_a1.png)
 
+## 页面逻辑
+
+![MiniClock](./doc/miniclock_page.png)
+
+## 设置代码
+
+![MiniClock](./doc/miniclock_setcode.png)
+
 ## 查看
 
 ### 查看时间,日历
+
 * 开机后默认显示 **[小时-分钟]** , 底部四个点循环滚动代表秒
 * 短按 **Set** 键可以查看 **[秒]**
 * 再次短按 **Set** 键可以查看 **[年]**
