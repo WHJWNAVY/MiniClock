@@ -77,7 +77,7 @@ typedef enum set_system_page_e
     SET_SYSTEM_PAGE_LIGHT = SET_SYSTEM_PAGE_MIN,
     SET_SYSTEM_PAGE_MIRROR,
     SET_SYSTEM_PAGE_MAX,
-}set_system_page_t;
+} set_system_page_t;
 
 //加减操作
 typedef enum set_oper_e
@@ -118,7 +118,7 @@ typedef struct system_cfg_e
 
 #define SYSTEM_CFG_SIZE ((SET_SYSTEM_PAGE_MAX-SET_SYSTEM_PAGE_MIN)+(SET_AUTO_SLEEP_MAX-SET_AUTO_SLEEP_MIN))//sizeof(sys_cfg_t)
 
-void system_cfg_init(system_cfg_t* cfg)
+void system_cfg_init(system_cfg_t *cfg)
 {
     if(cfg != NULL)
     {
@@ -132,29 +132,29 @@ void system_cfg_init(system_cfg_t* cfg)
     }
 }
 
-uint8 system_cfg_write(system_cfg_t* cfg)
+uint8 system_cfg_write(system_cfg_t *cfg)
 {
     uint8 ret = RTN_ERR;
     if(cfg != NULL)
     {
-        ret = cfgsave_write((uint8*)cfg, /*sizeof(system_cfg_t)*/SYSTEM_CFG_SIZE);
+        ret = cfgsave_write((uint8 *)cfg, /*sizeof(system_cfg_t)*/SYSTEM_CFG_SIZE);
     }
-    
+
     return ret;
 }
 
-uint8 system_cfg_read(system_cfg_t* cfg)
+uint8 system_cfg_read(system_cfg_t *cfg)
 {
     uint8 ret = RTN_ERR;
     if(cfg != NULL)
     {
-        ret = cfgsave_read((uint8*)cfg, /*sizeof(system_cfg_t)*/SYSTEM_CFG_SIZE);
+        ret = cfgsave_read((uint8 *)cfg, /*sizeof(system_cfg_t)*/SYSTEM_CFG_SIZE);
     }
-    
+
     return ret;
 }
 
-uint8 system_cfg_copy(system_cfg_t* dst, system_cfg_t* src)
+uint8 system_cfg_copy(system_cfg_t *dst, system_cfg_t *src)
 {
     uint8 ret = RTN_ERR;
     if((dst != NULL) && (src != NULL) && (src != dst))
@@ -168,11 +168,11 @@ uint8 system_cfg_copy(system_cfg_t* dst, system_cfg_t* src)
         dst->autosleep.e_min = src->autosleep.e_min;
         ret = RTN_OK;
     }
-    
+
     return ret;
 }
 
-void system_cfg_apply(system_cfg_t* cfg)
+void system_cfg_apply(system_cfg_t *cfg)
 {
     if(cfg != NULL)
     {
@@ -211,7 +211,7 @@ void _menu_data_deal_(uchar *dat, uchar op, uchar max, uchar min)
 void show_main_page(rtc_time_t *tm, uchar page)
 {
     uchar n = 0;
-    char xdata disp_str[LED_POS_MAX+1] = {0};
+    char xdata disp_str[LED_POS_MAX + 1] = {0};
     if(tm == NULL)
     {
         return;
@@ -231,7 +231,7 @@ void show_main_page(rtc_time_t *tm, uchar page)
         //sprintf(disp_str, "%bu%bu%bu%bu", (tm->hour / 10), (tm->hour % 10), (tm->minute / 10), (tm->minute % 10));
         //led_puts(0, disp_str, 1);
 
-        for(n=0; n<LED_POS_MAX; n++)
+        for(n = 0; n < LED_POS_MAX; n++)
         {
             if(((tm->second) % LED_POS_MAX) == n)
             {
@@ -296,7 +296,7 @@ void show_main_page(rtc_time_t *tm, uchar page)
 void show_time_set_page(rtc_time_t *tm, uchar page, uchar op)
 {
     uchar dat = 0;
-    char xdata disp_str[LED_POS_MAX+1] = {0};
+    char xdata disp_str[LED_POS_MAX + 1] = {0};
 
     if(tm == NULL)
     {
@@ -341,7 +341,7 @@ void show_date_set_page(rtc_time_t *tm, uchar page, uchar op)
 {
     uchar n = 0;
     uchar dat = 0;
-    char xdata disp_str[LED_POS_MAX+1] = {0};
+    char xdata disp_str[LED_POS_MAX + 1] = {0};
 
     if(tm == NULL)
     {
@@ -388,11 +388,11 @@ void show_date_set_page(rtc_time_t *tm, uchar page, uchar op)
     led_putis(0, disp_str, LED_POS_MAX, 1);
 }
 
-void show_system_set_page(system_cfg_t*cfg, uchar page, uchar op)
+void show_system_set_page(system_cfg_t *cfg, uchar page, uchar op)
 {
     uchar n = 0;
     uchar dat = 0;
-    char xdata disp_str[LED_POS_MAX+1] = {0};
+    char xdata disp_str[LED_POS_MAX + 1] = {0};
 
     if(cfg == NULL)
     {
@@ -428,11 +428,11 @@ void show_system_set_page(system_cfg_t*cfg, uchar page, uchar op)
     led_putis(0, disp_str, LED_POS_MAX, 1);
 }
 
-void show_autosleep_set_page(system_cfg_t*cfg, uchar page, uchar op)
+void show_autosleep_set_page(system_cfg_t *cfg, uchar page, uchar op)
 {
     uchar n = 0;
     uchar dat = 0;
-    char xdata disp_str[LED_POS_MAX+1] = {0};
+    char xdata disp_str[LED_POS_MAX + 1] = {0};
 
     if(cfg == NULL)
     {
@@ -507,7 +507,8 @@ void show_temp_page(void)
             led_puti(1, disp_temp % 10, 1);//个位
             led_puti(2, decimal % 10, 1);//小数
             if(led_get_mirror())//小数点
-            {//如果镜像显示，则小数点应该后移一位
+            {
+                //如果镜像显示，则小数点应该后移一位
                 led_putb(2, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
             }
             else
@@ -519,7 +520,7 @@ void show_temp_page(void)
     }
 }
 
-void show_nonli_page(rtc_time_t* time_t)
+void show_nonli_page(rtc_time_t *time_t)
 {
     uchar xdata i = 0;
     china_nonli_t xdata nonli_t = {0};
@@ -540,15 +541,24 @@ void show_nonli_page(rtc_time_t* time_t)
     led_puti(2, nonli_t.day / 10, 1);
     led_puti(3, nonli_t.day % 10, 1);
 
-    for(i=0; i<LED_POS_MAX; i++)
+    for(i = 0; i < LED_POS_MAX; i++)
     {
         led_putb(i, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
     }
 }
 
+void error_hang(void)
+{
+    while(1)
+    {
+        led_open_door(30);
+        led_close_door(30);
+        delay_xms(1000);
+    }
+}
+
 void main(void)
 {
-#if 1
     uchar i = 0, j = 0;
     uchar key_code = 0;
     uchar page_menu_cnt = PAGE_MENU_MIN;
@@ -577,7 +587,10 @@ void main(void)
     if(system_cfg_read(&syscfg_t) != RTN_OK)
     {
         system_cfg_init(&syscfg_t);
-        system_cfg_write(&syscfg_t);
+        if(system_cfg_write(&syscfg_t) != RTN_OK)
+        {
+            goto err;
+        }
     }
     system_cfg_apply(&syscfg_t);
 
@@ -600,11 +613,11 @@ void main(void)
             {
                 led_open();
                 page_menu_cnt = PAGE_MENU_MAIN;
-                main_autoexit_timer = DEF_SYS_AUTOEXIT_TMR+1;
+                main_autoexit_timer = DEF_SYS_AUTOEXIT_TMR + 1;
                 key_code = KEY_BTN_NULL;
                 led_open_door(30);
             }
-            
+
             switch(key_code)
             {
             case KEY_BTN_NEXT_PAGE://下一个界面
@@ -640,7 +653,7 @@ void main(void)
                     led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//闪烁
                 }
 
-                
+
                 //进入系统设置界面
                 if(page_menu_cnt == PAGE_MENU_SYSCFG)
                 {
@@ -776,10 +789,10 @@ void main(void)
                         main_mode_cnt = MAIN_MODE_MIN;
                     }
                 }
-                if((page_menu_cnt == PAGE_MENU_STIME) || 
-                   (page_menu_cnt == PAGE_MENU_SDATE) || 
-                   (page_menu_cnt == PAGE_MENU_SYSCFG) ||
-                   (page_menu_cnt == PAGE_MENU_SATSLEEP))
+                if((page_menu_cnt == PAGE_MENU_STIME) ||
+                        (page_menu_cnt == PAGE_MENU_SDATE) ||
+                        (page_menu_cnt == PAGE_MENU_SYSCFG) ||
+                        (page_menu_cnt == PAGE_MENU_SATSLEEP))
                 {
                     set_oper = SET_OPER_ADD;
                     //设置界面中，设置项发生改变后，设置项闪烁
@@ -794,13 +807,13 @@ void main(void)
                     main_mode_cnt--;
                     if(main_mode_cnt < MAIN_MODE_MIN)
                     {
-                        main_mode_cnt = MAIN_MODE_MAX-1;
+                        main_mode_cnt = MAIN_MODE_MAX - 1;
                     }
                 }
-                if((page_menu_cnt == PAGE_MENU_STIME) || 
-                   (page_menu_cnt == PAGE_MENU_SDATE) || 
-                   (page_menu_cnt == PAGE_MENU_SYSCFG) ||
-                   (page_menu_cnt == PAGE_MENU_SATSLEEP))
+                if((page_menu_cnt == PAGE_MENU_STIME) ||
+                        (page_menu_cnt == PAGE_MENU_SDATE) ||
+                        (page_menu_cnt == PAGE_MENU_SYSCFG) ||
+                        (page_menu_cnt == PAGE_MENU_SATSLEEP))
                 {
                     set_oper = SET_OPER_SUB;
                     //设置界面中，设置项发生改变后，设置项闪烁
@@ -815,7 +828,7 @@ void main(void)
                     main_mode_cnt--;
                     if(main_mode_cnt < MAIN_MODE_MIN)
                     {
-                        main_mode_cnt = MAIN_MODE_MAX-1;
+                        main_mode_cnt = MAIN_MODE_MAX - 1;
                     }
 
                     if(main_mode_cnt != MAIN_MODE_TIME)
@@ -880,7 +893,7 @@ void main(void)
             if(syscfg_t.autosleep.on)
             {
                 if((time_t.hour == syscfg_t.autosleep.s_hour) &&
-                   (time_t.minute == syscfg_t.autosleep.s_min))
+                        (time_t.minute == syscfg_t.autosleep.s_min))
                 {
                     page_menu_cnt = PAGE_MENU_POWER;
                     main_autoexit_timer = 0;
@@ -907,11 +920,11 @@ void main(void)
             if(syscfg_t.autosleep.on)
             {
                 if((time_t.hour == syscfg_t.autosleep.e_hour) &&
-                   (time_t.minute == syscfg_t.autosleep.e_min))
+                        (time_t.minute == syscfg_t.autosleep.e_min))
                 {
                     led_open();
                     page_menu_cnt = PAGE_MENU_MAIN;
-                    main_autoexit_timer = DEF_SYS_AUTOEXIT_TMR+1;
+                    main_autoexit_timer = DEF_SYS_AUTOEXIT_TMR + 1;
                     led_open_door(30);
                 }
             }
@@ -925,203 +938,7 @@ void main(void)
         led_update();
         delay_xms(DEF_SYS_LED_FPS);
     }
-#endif
-
-#if 0
-    uint8_t temp_str[LED_POS_MAX+1] = {0};
-    uint16 temp = 0;
-
-    key_init();
-    led_init();
-    ds3231_init();
-
-    led_set_mirror(DEF_SYS_LED_MIRROR);
-    key_set_mirror(DEF_SYS_LED_MIRROR);
-    led_open_door(50);
-    led_close_door(50);
-
-    while(1)
-    {
-        if(ds18b20_convert(&temp))
-        {
-            sprintf(temp_str, "%04s", "EEEE");
-        }
-        else
-        {
-            sprintf(temp_str, "%04X", temp);
-        }
-        temp_str[LED_POS_MAX] = 0;
-        led_puts(0, temp_str, 1); // 摄氏度
-        led_putb(1, LED_SEGB_SET(LED_SEGB_DP), 1, 1);//小数点
-        led_update();
-        delay_xms(100);
-    }
-#endif
-
-#if 0
-    uint8 sign = 0, disp_temp = 0;
-    uint16 interger = 0, decimal = 0;
-
-    key_init();
-    led_init();
-    ds3231_init();
-
-    led_set_mirror(DEF_SYS_LED_MIRROR);
-    key_set_mirror(DEF_SYS_LED_MIRROR);
-    led_open_door(50);
-    led_close_door(50);
-
-    while(1)
-    {
-        if(ds18b20_get_temp(&sign, &interger, &decimal) == RTN_OK)
-        {
-            if(sign)
-            {
-                disp_temp = ((decimal >= 5) ? (interger + 1) : interger);
-                disp_temp %= 100;
-                led_puti(0, LED_SEG_HL, 1);
-                led_puti(1, disp_temp / 10, 1);
-                led_puti(2, disp_temp % 10, 1);
-            }
-            else
-            {
-                disp_temp = (interger % 100);
-                led_puti(0, disp_temp / 10, 1);
-                led_puti(1, disp_temp % 10, 1);
-                led_puti(2, decimal % 10, 1);
-                if(led_get_mirror())
-                {
-                    led_putb(2, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
-                }
-                else
-                {
-                    led_putb(1, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
-                }
-            }
-            led_puti(3, LED_SEG_CEL, 1); // 摄氏度
-        }
-        led_update();
-        delay_xms(100);
-    }
-#endif
-
-#if 0
-    led_set_mirror(1);
-
-    led_open_door();
-    led_close_door();
-
-    led_clear(0);
-
-    led_set_flashc(1, 5);
-    led_set_flashc(3, 5);
-    led_puts(0, "ABCD", 1);
-
-    while(1)
-    {
-        led_update();
-        delay_xms(100);
-    }
-#endif
-
-#if 0
-
-    char i = 0, j = 0;
-
-    uchar led_segb[4] =
-    {
-        LED_SEGB_SET(LED_SEGB_A) | LED_SEGB_SET(LED_SEGB_D) | LED_SEGB_SET(LED_SEGB_G),
-        LED_SEGB_SET(LED_SEGB_B) | LED_SEGB_SET(LED_SEGB_C),
-        LED_SEGB_SET(LED_SEGB_E) | LED_SEGB_SET(LED_SEGB_F),
-        LED_SEGB_SET(LED_SEGB_G) | LED_SEGB_SET(LED_SEGB_B) | LED_SEGB_SET(LED_SEGB_C) | LED_SEGB_SET(LED_SEGB_DP),
-    };
-
-    led_init();
-    while(1)
-    {
-        led_clear(0);
-        led_update();
-
-        for(i = 0; i < LED_POS_MAX; i++)
-        {
-            for(j = 0; j < LED_SEGB_MAX; j++)
-            {
-                led_set_point(i, j, 1);
-                led_update();
-                delay_xms(50);
-            }
-        }
-        for(i = LED_POS_MAX - 1; i >= 0; i--)
-        {
-            for(j = LED_SEGB_MAX - 1; j >= 0; j--)
-            {
-                led_set_point(i, j, 0);
-                led_update();
-                delay_xms(50);
-            }
-        }
-
-        led_clear(0);
-        led_puts(0, "1234", 1);
-        led_update();
-        delay_xms(1000);
-
-        led_puts(0, "ABCD", 1);
-        led_update();
-        delay_xms(1000);
-
-        led_clear(0);
-
-        for(i = 0; i < LED_POS_MAX; i++)
-        {
-            j = ((i >= 2) ? 0 : 1);
-            led_putb(i, led_segb[0], 1, j);
-        }
-        led_update();
-        delay_xms(1000);
-        for(i = 0; i < LED_POS_MAX; i++)
-        {
-            j = ((i >= 2) ? 0 : 1);
-            led_putb(i, led_segb[1], 1, j);
-        }
-        led_update();
-        delay_xms(1000);
-        for(i = 0; i < LED_POS_MAX; i++)
-        {
-            j = ((i >= 2) ? 0 : 1);
-            led_putb(i, led_segb[2], 1, j);
-        }
-        led_update();
-        delay_xms(1000);
-        for(i = 0; i < LED_POS_MAX; i++)
-        {
-            j = ((i >= 2) ? 0 : 1);
-            led_putb(i, led_segb[3], 1, j);
-        }
-        led_update();
-        delay_xms(1000);
-    }
-#endif
-
-
-#if 0
-    uint8_t sign = 0;
-    uint16_t interger = 0;
-    uint16_t decimal = 0;
-    uchar temp_str[LED_POS_MAX] = {0};
-    led_init();
-    ds18b20_init();
-    led_puts(0, "A1B2", 1);
-    led_update();
-
-    while(1)
-    {
-        ds18b20_get_temp(&sign, &interger, &decimal);
-        sprintf(temp_str, "%04d", interger);
-        led_puts(0, temp_str, 1);
-        led_update();
-        delay_xms(100);
-    }
-#endif
+err:
+    error_hang();
 }
 

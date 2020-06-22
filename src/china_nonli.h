@@ -19,6 +19,6 @@ typedef struct china_nonli_s
  输出参数  : nonli      当前农历时间
  返 回 值  : 成功-RTN_OK, 失败-RTN_ERR
 *****************************************************************************/
-extern uchar china_nonli_get(rtc_time_t* tm, china_nonli_t* nonli);
+extern uchar china_nonli_get(rtc_time_t *tm, china_nonli_t *nonli);
 
 #endif

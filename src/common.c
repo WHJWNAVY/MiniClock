@@ -12,12 +12,13 @@ void delay_xms(uint x)      //@24MHz
     uchar i = 0, j = 0;
     while(x--)
     {
-    	i = 32;
-    	j = 40;
-    	do
-    	{
-    		while (--j);
-    	} while (--i);
+        i = 32;
+        j = 40;
+        do
+        {
+            while (--j);
+        }
+        while (--i);
     }
 }
 

@@ -10,7 +10,7 @@
  输出参数  : config 指向保存配置的指针
  返 回 值  : RTN_OK-成功，RTN_ERR-失败
 *****************************************************************************/
-uchar cfgsave_read(uchar* config, uint len);
+uchar cfgsave_read(uchar *config, uint len);
 
 /*****************************************************************************
  函 数 名  : cfgsave_write
@@ -20,6 +20,6 @@ uchar cfgsave_read(uchar* config, uint len);
  输出参数  : 无
  返 回 值  : RTN_OK-成功，RTN_ERR-失败
 *****************************************************************************/
-uchar cfgsave_write(uchar* config, uint len);
+uchar cfgsave_write(uchar *config, uint len);
 
 #endif

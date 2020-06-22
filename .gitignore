@@ -438,3 +438,6 @@ dkms.conf
 *.out
 *.app
 *.lst
+Objects/*
+Listings/*
+si/*

@@ -30,7 +30,7 @@ sfr     IAP_CONTR   =   0xC7;
 #define CONFIG_FLAG_HEAD_ADD            (IAP_EEPROM_START_ADDR)
 #define CONFIG_SAVE_ADDRESS             (CONFIG_FLAG_HEAD_ADD + CONFIG_SAVE_FLAG_LEN)
 #define CONFIG_FLAG_TAIL_ADD(len)       (CONFIG_SAVE_ADDRESS + (len))
-uint8 code CONFIG_SAVE_FLAG[CONFIG_SAVE_FLAG_LEN+1] =  {"WNAVY"};
+uint8 code CONFIG_SAVE_FLAG[CONFIG_SAVE_FLAG_LEN + 1] =  {"WNAVY"};
 
 void eeprom_iap_idle()
 {
@@ -111,9 +111,9 @@ uchar cfgsave_flagchk(uchar cfglen)
     {
         return RTN_ERR;
     }
-    
+
     delay_xus(100);
-    for (i=0; i<CONFIG_SAVE_FLAG_LEN; i++)//check the config save flag
+    for (i = 0; i < CONFIG_SAVE_FLAG_LEN; i++) //check the config save flag
     {
         //check the head flag
         if (eeprom_iap_read(CONFIG_FLAG_HEAD_ADD + i) != CONFIG_SAVE_FLAG[i])
@@ -146,14 +146,14 @@ uchar cfgsave_flagwrite(uchar cfglen)
     {
         return RTN_ERR;
     }
-    
+
     delay_xus(100);
-    for (i=0; i<CONFIG_SAVE_FLAG_LEN; i++)
+    for (i = 0; i < CONFIG_SAVE_FLAG_LEN; i++)
     {
         //write the head flag
         eeprom_iap_program(CONFIG_FLAG_HEAD_ADD + i, (uchar)(CONFIG_SAVE_FLAG[i]));
         //write the tail flag
-        eeprom_iap_program(CONFIG_FLAG_TAIL_ADD(cfglen) + i, (uchar)(CONFIG_SAVE_FLAG[i])); 
+        eeprom_iap_program(CONFIG_FLAG_TAIL_ADD(cfglen) + i, (uchar)(CONFIG_SAVE_FLAG[i]));
     }
 
 
@@ -167,7 +167,7 @@ uchar cfgsave_flagwrite(uchar cfglen)
  输出参数  : config 指向保存配置的指针
  返 回 值  : RTN_OK-成功，RTN_ERR-失败
 *****************************************************************************/
-uchar cfgsave_read(uchar* config, uint len)
+uchar cfgsave_read(uchar *config, uint len)
 {
     uint i;
 
@@ -183,7 +183,7 @@ uchar cfgsave_read(uchar* config, uint len)
 
     delay_xus(100);
 
-    for(i=0; i<len; i++)
+    for(i = 0; i < len; i++)
     {
         //config[i] = eeprom_iap_read(CONFIG_SAVE_ADDRESS + i);
         *(config + i) = eeprom_iap_read(CONFIG_SAVE_ADDRESS + i);
@@ -200,7 +200,7 @@ uchar cfgsave_read(uchar* config, uint len)
  输出参数  : 无
  返 回 值  : RTN_OK-成功，RTN_ERR-失败
 *****************************************************************************/
-uchar cfgsave_write(uchar* config, uint len)
+uchar cfgsave_write(uchar *config, uint len)
 {
     uint i;
 
@@ -216,7 +216,7 @@ uchar cfgsave_write(uchar* config, uint len)
 
     delay_xus(100);
 
-    for(i=0; i<len; i++)
+    for(i = 0; i < len; i++)
     {
         eeprom_iap_program(CONFIG_SAVE_ADDRESS + i, (uchar)(*(config + i)));
     }
