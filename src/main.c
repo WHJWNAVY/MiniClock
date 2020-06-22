@@ -503,10 +503,10 @@ void show_temp_page(void)
         else//正数
         {
             disp_temp = (interger % 100);
-            led_puti(0, disp_temp / 10, 1);//ʮλ
-            led_puti(1, disp_temp % 10, 1);//��λ
-            led_puti(2, decimal % 10, 1);//С��
-            if(led_get_mirror())//С���
+            led_puti(0, disp_temp / 10, 1);//十位
+            led_puti(1, disp_temp % 10, 1);//个位
+            led_puti(2, decimal % 10, 1);//小数
+            if(led_get_mirror())//小数点
             {
                 //如果镜像显示，则小数点应该后移一位
                 led_putb(2, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
