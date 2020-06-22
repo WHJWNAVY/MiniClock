@@ -437,3 +437,4 @@ dkms.conf
 *.exe
 *.out
 *.app
+*.lst
