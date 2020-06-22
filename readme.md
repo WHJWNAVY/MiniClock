@@ -2,6 +2,15 @@
 
 ![MiniClock](./media/miniclock_a0.png)
 ![MiniClock](./media/miniclock_a1.png)
+![MiniClock](./media/IMG_20190424_221545_1_compressed.jpg)
+![MiniClock](./media/IMG_20190427_181814_1_compressed.jpg)
+![MiniClock](./media/IMG_20190427_181755_1_compressed.jpg)
+![MiniClock](./media/IMG_20190424_221558_1_compressed.jpg)
+![MiniClock](./media/IMG_20190424_221613_1_compressed.jpg)
+
+![MiniClock](./doc/miniclock_sch.png)
+![MiniClock](./doc/miniclock_pcba.png)
+![MiniClock](./doc/miniclock_pcbb.png)
 
 ## 页面逻辑
 
