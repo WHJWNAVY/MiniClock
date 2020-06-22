@@ -14,20 +14,20 @@
 #define DEF_SYS_LED_LIGHT    (5u)
 #define DEF_SYS_AUTO_SLEEP   (1u)
 
-//²Ëµ¥ÁĞ±í
+//èœå•åˆ—è¡¨
 typedef enum page_mode_e
 {
     PAGE_MENU_MIN = 0x1Au,
-    PAGE_MENU_MAIN = PAGE_MENU_MIN,//Ö÷½çÃæ
-    PAGE_MENU_STIME,//Ê±¼äÉèÖÃ½çÃæ
-    PAGE_MENU_SDATE,//ÈÕÆÚÉèÖÃ½çÃæ
-    PAGE_MENU_SATSLEEP,//×Ô¶¯ĞİÃßÉèÖÃ
-    PAGE_MENU_SYSCFG,//ÏµÍ³ÉèÖÃ
+    PAGE_MENU_MAIN = PAGE_MENU_MIN,//ä¸»ç•Œé¢
+    PAGE_MENU_STIME,//æ—¶é—´è®¾ç½®ç•Œé¢
+    PAGE_MENU_SDATE,//æ—¥æœŸè®¾ç½®ç•Œé¢
+    PAGE_MENU_SATSLEEP,//è‡ªåŠ¨ä¼‘çœ è®¾ç½®
+    PAGE_MENU_SYSCFG,//ç³»ç»Ÿè®¾ç½®
     PAGE_MENU_MAX,
     PAGE_MENU_POWER,
 } page_mode_e;
 
-//¼ÆÊ±Ä£Ê½
+//è®¡æ—¶æ¨¡å¼
 typedef enum main_mode_e
 {
     MAIN_MODE_MIN = 0x20u,
@@ -37,7 +37,7 @@ typedef enum main_mode_e
     MAIN_MODE_MAX,
 } main_mode_t;
 
-//Ö÷Ò³ÇĞ»»
+//ä¸»é¡µåˆ‡æ¢
 typedef enum main_page_e
 {
     MAIN_PAGE_MIN = 0x2Au,
@@ -50,7 +50,7 @@ typedef enum main_page_e
 } main_page_t;
 
 
-//Ê±¼äÉèÖÃ½çÃæ
+//æ—¶é—´è®¾ç½®ç•Œé¢
 typedef enum set_time_page_e
 {
     SET_TIME_PAGE_MIN = 0x3Au,
@@ -60,7 +60,7 @@ typedef enum set_time_page_e
     SET_TIME_PAGE_MAX,
 } set_time_page_t;
 
-//ÈÕÆÚÉèÖÃ½çÃæ
+//æ—¥æœŸè®¾ç½®ç•Œé¢
 typedef enum set_date_page_e
 {
     SET_DATE_PAGE_MIN = 0x4Au,
@@ -79,7 +79,7 @@ typedef enum set_system_page_e
     SET_SYSTEM_PAGE_MAX,
 } set_system_page_t;
 
-//¼Ó¼õ²Ù×÷
+//åŠ å‡æ“ä½œ
 typedef enum set_oper_e
 {
     SET_OPER_MIN = 0x5Au,
@@ -88,7 +88,7 @@ typedef enum set_oper_e
     SET_OPER_MAX,
 } set_oper_t;
 
-//ÈÕÆÚÉèÖÃ½çÃæ
+//æ—¥æœŸè®¾ç½®ç•Œé¢
 typedef enum set_auto_sleep_e
 {
     SET_AUTO_SLEEP_MIN = 0x6Au,
@@ -188,7 +188,7 @@ void _menu_data_deal_(uchar *dat, uchar op, uchar max, uchar min)
     if((op == SET_OPER_ADD) || (op == SET_OPER_SUB))
     {
         data_t = (char)(*dat);
-        if(op == SET_OPER_ADD)//¼Ó
+        if(op == SET_OPER_ADD)//åŠ 
         {
             data_t++;
             if(data_t > max)
@@ -196,7 +196,7 @@ void _menu_data_deal_(uchar *dat, uchar op, uchar max, uchar min)
                 data_t = min;
             }
         }
-        else if(op == SET_OPER_SUB)///¼õ
+        else if(op == SET_OPER_SUB)///å‡
         {
             data_t--;
             if(data_t < min)
@@ -492,23 +492,23 @@ void show_temp_page(void)
 
     if(ds18b20_get_temp(&sign, &interger, &decimal) == RTN_OK)
     {
-        if(sign)//¸ºÊı
+        if(sign)//è´Ÿæ•°
         {
             disp_temp = ((decimal >= 5) ? (interger + 1) : interger);
             disp_temp %= 100;
-            led_puti(0, LED_SEG_HL, 1);//¸ººÅ
-            led_puti(1, disp_temp / 10, 1);//Ê®Î»
-            led_puti(2, disp_temp % 10, 1);//¸öÎ»
+            led_puti(0, LED_SEG_HL, 1);//è´Ÿå·
+            led_puti(1, disp_temp / 10, 1);//åä½
+            led_puti(2, disp_temp % 10, 1);//ä¸ªä½
         }
-        else//ÕıÊı
+        else//æ­£æ•°
         {
             disp_temp = (interger % 100);
             led_puti(0, disp_temp / 10, 1);//Ê®Î»
-            led_puti(1, disp_temp % 10, 1);//¸öÎ»
-            led_puti(2, decimal % 10, 1);//Ğ¡Êı
-            if(led_get_mirror())//Ğ¡Êıµã
+            led_puti(1, disp_temp % 10, 1);//ï¿½ï¿½Î»
+            led_puti(2, decimal % 10, 1);//Ğ¡ï¿½ï¿½
+            if(led_get_mirror())//Ğ¡ï¿½ï¿½ï¿½
             {
-                //Èç¹û¾µÏñÏÔÊ¾£¬ÔòĞ¡ÊıµãÓ¦¸ÃºóÒÆÒ»Î»
+                //å¦‚æœé•œåƒæ˜¾ç¤ºï¼Œåˆ™å°æ•°ç‚¹åº”è¯¥åç§»ä¸€ä½
                 led_putb(2, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
             }
             else
@@ -516,7 +516,7 @@ void show_temp_page(void)
                 led_putb(1, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
             }
         }
-        led_puti(3, LED_SEG_CEL, 1); // ÉãÊÏ¶È
+        led_puti(3, LED_SEG_CEL, 1); // æ‘„æ°åº¦
     }
 }
 
@@ -535,7 +535,7 @@ void show_nonli_page(rtc_time_t *time_t)
         return;
     }
 
-    //ÎªÁËÇø·Ö£¬ÏÔÊ¾ËÄ¸öµã
+    //ä¸ºäº†åŒºåˆ†ï¼Œæ˜¾ç¤ºå››ä¸ªç‚¹
     led_puti(0, nonli_t.month / 10, 1);
     led_puti(1, nonli_t.month % 10, 1);
     led_puti(2, nonli_t.day / 10, 1);
@@ -608,7 +608,7 @@ void main(void)
             main_autoexit_timer = 0;
             main_mode_force = 0;
 
-            //°´ÈÎÒâ¼üÍË³öĞİÃßÄ£Ê½
+            //æŒ‰ä»»æ„é”®é€€å‡ºä¼‘çœ æ¨¡å¼
             if(page_menu_cnt == PAGE_MENU_POWER)
             {
                 led_open();
@@ -620,7 +620,7 @@ void main(void)
 
             switch(key_code)
             {
-            case KEY_BTN_NEXT_PAGE://ÏÂÒ»¸ö½çÃæ
+            case KEY_BTN_NEXT_PAGE://ä¸‹ä¸€ä¸ªç•Œé¢
             {
                 page_menu_cnt++;
                 if(page_menu_cnt >= PAGE_MENU_MAX)
@@ -632,48 +632,47 @@ void main(void)
                 {
                     main_mode_cnt = MAIN_MODE_MIN;
                     main_page_cnt = MAIN_PAGE_MIN;
-                    led_set_flashs(0, LED_POS_MAX, 0);//È¡ÏûÉÁË¸
+                    led_set_flashs(0, LED_POS_MAX, 0);//å–æ¶ˆé—ªçƒ
                 }
 
-                //½øÈëÉèÖÃÊ±¼ä½çÃæ
+                //è¿›å…¥è®¾ç½®æ—¶é—´ç•Œé¢
                 if(page_menu_cnt == PAGE_MENU_STIME)
                 {
                     settime_page_cnt = SET_TIME_PAGE_MIN;
                     ds3231_read_time(&time_set);
-                    //½øÈëÉèÖÃ½çÃæºó£¬ÉèÖÃÏîÉÁË¸
-                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//ÉÁË¸
+                    //è¿›å…¥è®¾ç½®ç•Œé¢åï¼Œè®¾ç½®é¡¹é—ªçƒ
+                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//é—ªçƒ
                 }
 
-                //½øÈëÉèÖÃÈÕÆÚ½çÃæ
+                //è¿›å…¥è®¾ç½®æ—¥æœŸç•Œé¢
                 if(page_menu_cnt == PAGE_MENU_SDATE)
                 {
                     setdate_page_cnt = SET_DATE_PAGE_MIN;
                     ds3231_read_time(&date_set);
-                    //½øÈëÉèÖÃ½çÃæºó£¬ÉèÖÃÏîÉÁË¸
-                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//ÉÁË¸
+                    //è¿›å…¥è®¾ç½®ç•Œé¢åï¼Œè®¾ç½®é¡¹é—ªçƒ
+                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//é—ªçƒ
                 }
 
-
-                //½øÈëÏµÍ³ÉèÖÃ½çÃæ
+                //è¿›å…¥ç³»ç»Ÿè®¾ç½®ç•Œé¢
                 if(page_menu_cnt == PAGE_MENU_SYSCFG)
                 {
                     setsys_page_cnt = SET_SYSTEM_PAGE_MIN;
                     system_cfg_copy(&syscfg_set, &syscfg_t);
-                    //½øÈëÉèÖÃ½çÃæºó£¬ÉèÖÃÏîÉÁË¸
-                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//ÉÁË¸
+                    //è¿›å…¥è®¾ç½®ç•Œé¢åï¼Œè®¾ç½®é¡¹é—ªçƒ
+                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//é—ªçƒ
                 }
 
-                //½øÈë×Ô¶¯ĞİÃßÉèÖÃ½çÃæ
+                //è¿›å…¥è‡ªåŠ¨ä¼‘çœ è®¾ç½®ç•Œé¢
                 if(page_menu_cnt == PAGE_MENU_SATSLEEP)
                 {
                     setauto_sleep_cnt = SET_AUTO_SLEEP_MIN;
                     system_cfg_copy(&syscfg_set, &syscfg_t);
-                    //½øÈëÉèÖÃ½çÃæºó£¬ÉèÖÃÏîÉÁË¸
-                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//ÉÁË¸
+                    //è¿›å…¥è®¾ç½®ç•Œé¢åï¼Œè®¾ç½®é¡¹é—ªçƒ
+                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//é—ªçƒ
                 }
             }
             break;
-            case KEY_BTN_SAVE_SETT://±£´æ
+            case KEY_BTN_SAVE_SETT://ä¿å­˜
             {
                 if(page_menu_cnt == PAGE_MENU_STIME)
                 {
@@ -683,8 +682,8 @@ void main(void)
                     time_set.month = date_set.month;
                     time_set.day = date_set.day;
                     ds3231_set_time(&time_set);
-                    //±£´æÅäÖÃºó£¬ÉèÖÃÏîÍ£Ö¹ÉÁË¸
-                    led_set_flashs(0, LED_POS_MAX, 0);//È¡ÏûÉÁË¸
+                    //ä¿å­˜é…ç½®åï¼Œè®¾ç½®é¡¹åœæ­¢é—ªçƒ
+                    led_set_flashs(0, LED_POS_MAX, 0);//å–æ¶ˆé—ªçƒ
                 }
 
                 if(page_menu_cnt == PAGE_MENU_SDATE)
@@ -694,8 +693,8 @@ void main(void)
                     date_set.minute = time_set.minute;
                     date_set.second = time_set.second;
                     ds3231_set_time(&date_set);
-                    //±£´æÅäÖÃºó£¬ÉèÖÃÏîÍ£Ö¹ÉÁË¸
-                    led_set_flashs(0, LED_POS_MAX, 0);//È¡ÏûÉÁË¸
+                    //ä¿å­˜é…ç½®åï¼Œè®¾ç½®é¡¹åœæ­¢é—ªçƒ
+                    led_set_flashs(0, LED_POS_MAX, 0);//å–æ¶ˆé—ªçƒ
                 }
 
                 if(page_menu_cnt == PAGE_MENU_SYSCFG)
@@ -703,8 +702,8 @@ void main(void)
                     system_cfg_copy(&syscfg_t, &syscfg_set);
                     system_cfg_write(&syscfg_t);
                     system_cfg_apply(&syscfg_t);
-                    //±£´æÅäÖÃºó£¬ÉèÖÃÏîÍ£Ö¹ÉÁË¸
-                    led_set_flashs(0, LED_POS_MAX, 0);//È¡ÏûÉÁË¸
+                    //ä¿å­˜é…ç½®åï¼Œè®¾ç½®é¡¹åœæ­¢é—ªçƒ
+                    led_set_flashs(0, LED_POS_MAX, 0);//å–æ¶ˆé—ªçƒ
                 }
 
                 if(page_menu_cnt == PAGE_MENU_SATSLEEP)
@@ -712,8 +711,8 @@ void main(void)
                     system_cfg_copy(&syscfg_t, &syscfg_set);
                     system_cfg_write(&syscfg_t);
                     //system_cfg_apply(&syscfg_t);
-                    //±£´æÅäÖÃºó£¬ÉèÖÃÏîÍ£Ö¹ÉÁË¸
-                    led_set_flashs(0, LED_POS_MAX, 0);//È¡ÏûÉÁË¸
+                    //ä¿å­˜é…ç½®åï¼Œè®¾ç½®é¡¹åœæ­¢é—ªçƒ
+                    led_set_flashs(0, LED_POS_MAX, 0);//å–æ¶ˆé—ªçƒ
                 }
 
                 if(page_menu_cnt == PAGE_MENU_MAIN)
@@ -731,7 +730,7 @@ void main(void)
                 }
             }
             break;
-            case KEY_BTN_NEXT_ENTRY://ÏÂÒ»¸öÌõÄ¿
+            case KEY_BTN_NEXT_ENTRY://ä¸‹ä¸€ä¸ªæ¡ç›®
             {
                 if(page_menu_cnt == PAGE_MENU_MAIN)
                 {
@@ -795,8 +794,8 @@ void main(void)
                         (page_menu_cnt == PAGE_MENU_SATSLEEP))
                 {
                     set_oper = SET_OPER_ADD;
-                    //ÉèÖÃ½çÃæÖĞ£¬ÉèÖÃÏî·¢Éú¸Ä±äºó£¬ÉèÖÃÏîÉÁË¸
-                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//ÉÁË¸
+                    //è®¾ç½®ç•Œé¢ä¸­ï¼Œè®¾ç½®é¡¹å‘ç”Ÿæ”¹å˜åï¼Œè®¾ç½®é¡¹é—ªçƒ
+                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//é—ªçƒ
                 }
             }
             break;
@@ -816,8 +815,8 @@ void main(void)
                         (page_menu_cnt == PAGE_MENU_SATSLEEP))
                 {
                     set_oper = SET_OPER_SUB;
-                    //ÉèÖÃ½çÃæÖĞ£¬ÉèÖÃÏî·¢Éú¸Ä±äºó£¬ÉèÖÃÏîÉÁË¸
-                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//ÉÁË¸
+                    //è®¾ç½®ç•Œé¢ä¸­ï¼Œè®¾ç½®é¡¹å‘ç”Ÿæ”¹å˜åï¼Œè®¾ç½®é¡¹é—ªçƒ
+                    led_set_flashs(2, 2, DEF_SYS_LED_FLASH);//é—ªçƒ
                 }
             }
             break;
@@ -862,15 +861,15 @@ void main(void)
 
         if(main_autoexit_timer > DEF_SYS_AUTOEXIT_TMR)
         {
-            page_menu_cnt = PAGE_MENU_MAIN;//»ØÍËµ½Ö÷½çÃæ
-            main_mode_cnt = MAIN_MODE_TIME;//»ØÍËµ½¼ÆÊ±Ä£Ê½
-            main_page_cnt = MAIN_PAGE_HHMM;//»ØÍËµ½Ê±¼äÄ£Ê½
+            page_menu_cnt = PAGE_MENU_MAIN;//å›é€€åˆ°ä¸»ç•Œé¢
+            main_mode_cnt = MAIN_MODE_TIME;//å›é€€åˆ°è®¡æ—¶æ¨¡å¼
+            main_page_cnt = MAIN_PAGE_HHMM;//å›é€€åˆ°æ—¶é—´æ¨¡å¼
             main_autoexit_timer = 0;
         }
 
         if(page_menu_cnt == PAGE_MENU_MAIN)
         {
-            led_set_flashs(0, LED_POS_MAX, 0);//²Ëµ¥½çÃæ»áÉèÖÃÉÁË¸£¬ÕâÀïÈ¡ÏûÉÁË¸
+            led_set_flashs(0, LED_POS_MAX, 0);//èœå•ç•Œé¢ä¼šè®¾ç½®é—ªçƒï¼Œè¿™é‡Œå–æ¶ˆé—ªçƒ
         }
 
         ds3231_read_time(&time_t);
