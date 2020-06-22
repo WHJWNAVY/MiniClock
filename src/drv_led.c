@@ -36,7 +36,7 @@ uint16 LED_FLASH_TMR[LED_POS_MAX] = {0};//…¡À∏
 #define LED_MIRROR_POS(pos) (pos = (g_led_mirror ? (LED_POS_MAX - 1 - pos) : pos))
 #define LED_MIRROR_SEG(seg) (seg = (g_led_mirror ? LED_SEGB_MIRROR[seg] : seg))
 
-uchar code LED_SEGB_MIRROR[LED_SEGB_MAX] = 
+uchar code LED_SEGB_MIRROR[LED_SEGB_MAX] =
 {
     LED_SEGB_G,
     LED_SEGB_C,
@@ -61,36 +61,36 @@ uchar code LED_SEGB_MIRROR[LED_SEGB_MAX] =
 
 uchar code LED_SEG_CODE[LED_SEG_MAX] =
 {
-    u8bset(_sa)|u8bset(_sb)|u8bset(_sc)|u8bset(_sd)|u8bset(_se)|u8bset(_sf),            //0x7E,// 0
-    u8bset(_sb)|u8bset(_sc),                                                            //0x30,// 1 |
-    u8bset(_sa)|u8bset(_sb)|u8bset(_sg)|u8bset(_se)|u8bset(_sd),                        //0x6D,// 2
-    u8bset(_sa)|u8bset(_sb)|u8bset(_sg)|u8bset(_sc)|u8bset(_sd),                        //0x79,// 3
-    u8bset(_sf)|u8bset(_sg)|u8bset(_sb)|u8bset(_sc),                                    //0x33,// 4
-    u8bset(_sa)|u8bset(_sf)|u8bset(_sg)|u8bset(_sc)|u8bset(_sd),                        //0x5B,// 5
-    u8bset(_sa)|u8bset(_sf)|u8bset(_se)|u8bset(_sd)|u8bset(_sc)|u8bset(_sg),            //0x5F,// 6
-    u8bset(_sa)|u8bset(_sb)|u8bset(_sc),                                                //0x70,// 7
-    u8bset(_sa)|u8bset(_sb)|u8bset(_sc)|u8bset(_sd)|u8bset(_se)|u8bset(_sf)|u8bset(_sg),//0x7F,// 8
-    u8bset(_sa)|u8bset(_sf)|u8bset(_sg)|u8bset(_sb)|u8bset(_sc)|u8bset(_sd),            //0x7B,// 9
-    u8bset(_sa)|u8bset(_sf)|u8bset(_se)|u8bset(_sb)|u8bset(_sc)|u8bset(_sg),            //0x77,// A
-    u8bset(_sf)|u8bset(_se)|u8bset(_sd)|u8bset(_sc)|u8bset(_sg),                        //0x1F,// b
-    u8bset(_sa)|u8bset(_sf)|u8bset(_se)|u8bset(_sd),                                    //0x4E,// C [
-    u8bset(_sb)|u8bset(_sc)|u8bset(_sd)|u8bset(_se)|u8bset(_sg),                        //0x3D,// d
-    u8bset(_sa)|u8bset(_sf)|u8bset(_se)|u8bset(_sd)|u8bset(_sg),                        //0x4F,// E
-    u8bset(_sa)|u8bset(_sf)|u8bset(_se)|u8bset(_sg),                                    //0x47,// F
-    u8bset(_sa)|u8bset(_sf)|u8bset(_se)|u8bset(_sd)|u8bset(_sc),                        //0x5E,// G
-    u8bset(_sa)|u8bset(_sb)|u8bset(_sc)|u8bset(_sd),                                    //0x78,// ]
-    u8bset(_sf)|u8bset(_se)|u8bset(_sc)|u8bset(_sb)|u8bset(_sg),                        //0x37,// H
-    u8bset(_sf)|u8bset(_se)|u8bset(_sc)|u8bset(_sg),                                    //0x17,// h
-    u8bset(_sg)|u8bset(_se)|u8bset(_sd),                                                //0x0D,// c
-    u8bset(_sf)|u8bset(_se)|u8bset(_sd),                                                //0x0E,// L
-    u8bset(_sa)|u8bset(_sb)|u8bset(_sg)|u8bset(_sf)|u8bset(_se),                        //0x67,// P
-    u8bset(_sg)|u8bset(_sc)|u8bset(_sd)|u8bset(_se),                                    //0x1D,// o
-    u8bset(_sa)|u8bset(_sf),                                                            //0x42,//AF
-    u8bset(_sa)|u8bset(_sb),                                                            //0x60,//AB
-    u8bset(_sd)|u8bset(_se),                                                            //0x0C,//DE
-    u8bset(_sc)|u8bset(_sd),                                                            //0x18,//CD
-    u8bset(_sb)|u8bset(_sc)|u8bset(_sg),                                                //0x31,//BCG
-    u8bset(_se)|u8bset(_sf)|u8bset(_sg),                                                //0x07,//EFG
+    u8bset(_sa) | u8bset(_sb) | u8bset(_sc) | u8bset(_sd) | u8bset(_se) | u8bset(_sf),  //0x7E,// 0
+    u8bset(_sb) | u8bset(_sc),                                                          //0x30,// 1 |
+    u8bset(_sa) | u8bset(_sb) | u8bset(_sg) | u8bset(_se) | u8bset(_sd),                //0x6D,// 2
+    u8bset(_sa) | u8bset(_sb) | u8bset(_sg) | u8bset(_sc) | u8bset(_sd),                //0x79,// 3
+    u8bset(_sf) | u8bset(_sg) | u8bset(_sb) | u8bset(_sc),                              //0x33,// 4
+    u8bset(_sa) | u8bset(_sf) | u8bset(_sg) | u8bset(_sc) | u8bset(_sd),                //0x5B,// 5
+    u8bset(_sa) | u8bset(_sf) | u8bset(_se) | u8bset(_sd) | u8bset(_sc) | u8bset(_sg),  //0x5F,// 6
+    u8bset(_sa) | u8bset(_sb) | u8bset(_sc),                                            //0x70,// 7
+    u8bset(_sa) | u8bset(_sb) | u8bset(_sc) | u8bset(_sd) | u8bset(_se) | u8bset(_sf) | u8bset(_sg), //0x7F,// 8
+    u8bset(_sa) | u8bset(_sf) | u8bset(_sg) | u8bset(_sb) | u8bset(_sc) | u8bset(_sd),  //0x7B,// 9
+    u8bset(_sa) | u8bset(_sf) | u8bset(_se) | u8bset(_sb) | u8bset(_sc) | u8bset(_sg),  //0x77,// A
+    u8bset(_sf) | u8bset(_se) | u8bset(_sd) | u8bset(_sc) | u8bset(_sg),                //0x1F,// b
+    u8bset(_sa) | u8bset(_sf) | u8bset(_se) | u8bset(_sd),                              //0x4E,// C [
+    u8bset(_sb) | u8bset(_sc) | u8bset(_sd) | u8bset(_se) | u8bset(_sg),                //0x3D,// d
+    u8bset(_sa) | u8bset(_sf) | u8bset(_se) | u8bset(_sd) | u8bset(_sg),                //0x4F,// E
+    u8bset(_sa) | u8bset(_sf) | u8bset(_se) | u8bset(_sg),                              //0x47,// F
+    u8bset(_sa) | u8bset(_sf) | u8bset(_se) | u8bset(_sd) | u8bset(_sc),                //0x5E,// G
+    u8bset(_sa) | u8bset(_sb) | u8bset(_sc) | u8bset(_sd),                              //0x78,// ]
+    u8bset(_sf) | u8bset(_se) | u8bset(_sc) | u8bset(_sb) | u8bset(_sg),                //0x37,// H
+    u8bset(_sf) | u8bset(_se) | u8bset(_sc) | u8bset(_sg),                              //0x17,// h
+    u8bset(_sg) | u8bset(_se) | u8bset(_sd),                                            //0x0D,// c
+    u8bset(_sf) | u8bset(_se) | u8bset(_sd),                                            //0x0E,// L
+    u8bset(_sa) | u8bset(_sb) | u8bset(_sg) | u8bset(_sf) | u8bset(_se),                //0x67,// P
+    u8bset(_sg) | u8bset(_sc) | u8bset(_sd) | u8bset(_se),                              //0x1D,// o
+    u8bset(_sa) | u8bset(_sf),                                                          //0x42,//AF
+    u8bset(_sa) | u8bset(_sb),                                                          //0x60,//AB
+    u8bset(_sd) | u8bset(_se),                                                          //0x0C,//DE
+    u8bset(_sc) | u8bset(_sd),                                                          //0x18,//CD
+    u8bset(_sb) | u8bset(_sc) | u8bset(_sg),                                            //0x31,//BCG
+    u8bset(_se) | u8bset(_sf) | u8bset(_sg),                                            //0x07,//EFG
     u8bset(_sp),                                                                        //0x80,// DP∂Œ
     u8bset(_sa),                                                                        //0x40,// A∂Œ
     u8bset(_sb),                                                                        //0x20,// B∂Œ
@@ -188,7 +188,7 @@ uint8 led_get_mirror(void)
 uchar led_mirror_segb(uchar segb)
 {
     uchar segbc = 0, i = 0;
-    for(i=0; i<LED_SEGB_MAX; i++)
+    for(i = 0; i < LED_SEGB_MAX; i++)
     {
         if(segb & (0x01 << i))
         {
@@ -285,9 +285,9 @@ void led_clear(uchar dat)
 void led_open_door(uint16 delay)
 {
     uchar i = 0, j = 0;
-    for(i=0; i<LED_POS_MAX; i++)
+    for(i = 0; i < LED_POS_MAX; i++)
     {
-        for(j=0; j<LED_SEGB_MAX; j++)
+        for(j = 0; j < LED_SEGB_MAX; j++)
         {
             led_set_point(i, j, 1);
             led_update();
@@ -299,11 +299,11 @@ void led_open_door(uint16 delay)
 void led_close_door(uint16 delay)
 {
     uchar i = 0, j = 0;
-    for(i=0; i<LED_POS_MAX; i++)
+    for(i = 0; i < LED_POS_MAX; i++)
     {
-        for(j=0; j<LED_SEGB_MAX; j++)
+        for(j = 0; j < LED_SEGB_MAX; j++)
         {
-            led_set_point(LED_POS_MAX-1-i, LED_SEGB_MAX-1-j, 0);
+            led_set_point(LED_POS_MAX - 1 - i, LED_SEGB_MAX - 1 - j, 0);
             led_update();
             delay_xms(delay);
         }
@@ -493,8 +493,8 @@ uchar led_putb(uchar pos, uchar segb, uchar col, uchar andor)
         return RTN_ERR;
     }
 
-    for(i=0; i<LED_SEGB_MAX; i++)
-    {        
+    for(i = 0; i < LED_SEGB_MAX; i++)
+    {
         if(andor)
         {
             if(segb & (0x01 << i))
@@ -515,7 +515,7 @@ uchar led_putb(uchar pos, uchar segb, uchar col, uchar andor)
         }
     }
 
-    
+
 
     return RTN_OK;
 }
@@ -583,7 +583,7 @@ uchar led_set_flashc(uchar pos, uint16 flashtmr)
     LED_MIRROR_POS(pos);
 
     LED_FLASH_TMR[pos] = flashtmr;
-    
+
     return RTN_OK;
 }
 
@@ -603,7 +603,7 @@ uchar led_set_flashs(uchar pos, uchar len, uint16 flashtmr)
     {
         led_set_flashc(i, flashtmr);
     }
-    
+
     return RTN_OK;
 }
 
