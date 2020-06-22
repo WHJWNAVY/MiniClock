@@ -6,7 +6,7 @@ sbit KEY_BTN_2 = P3 ^ 7;
 
 #define KEY_BTN_SHORT_PRESS_CNT  (10u)
 #define KEY_BTN_LONG_PRESS_CNT   (1000u)
-#define KEY_BTN_LLONG_PRESS_CNT  (2000u)
+#define KEY_BTN_LLONG_PRESS_CNT  (2200u)
 
 uint8 g_key_code = KEY_BTN_NULL;
 uint8 g_key_miiror = 0;
@@ -121,7 +121,7 @@ uchar key_get_code(void)
 {
     uint8 keycode = KEY_BTN_NULL;
 
-    if((g_key_code <= KEY_BTN_CODE_MIN) && (g_key_code >= KEY_BTN_CODE_MAX))
+    if((g_key_code >= KEY_BTN_CODE_MIN) && (g_key_code <= KEY_BTN_CODE_MAX))
     {
         keycode = g_key_code;
     }
