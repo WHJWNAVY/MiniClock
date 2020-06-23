@@ -227,97 +227,19 @@ void show_hhmm_second(uchar second, uchar mode)
     uchar n = 0, m = 0;
     switch (mode)
     {
-        case 1:
+    case 1:
+    {
+        /* ---- */
+        /* X--- */
+        /* XX-- */
+        /* XXX- */
+        /* XXXX */
+        m = ((second) % (LED_POS_MAX + 1));
+        if (m < LED_POS_MAX)
         {
-            /* ---- */
-            /* X--- */
-            /* XX-- */
-            /* XXX- */
-            /* XXXX */
-            m = ((second) % (LED_POS_MAX + 1));
-            if (m < LED_POS_MAX)
-            {
-                for(n = 0; n < LED_POS_MAX; n++)
-                {
-                    if(n <= m)
-                    {
-                        led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
-                    }
-                    else
-                    {
-                        led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 0, 1);
-                    }
-                }
-            }
-            else
-            {
-                for(n = 0; n < LED_POS_MAX; n++)
-                {
-                    led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 0, 1);
-                }
-            }
-        }
-        break;
-        case 2:
-        {
-            /* -X-- */
-            /* -O-- */
-            n = (LED_POS_MAX / 2) - 1;
-            if(((second) % 2) == 0)
-            {
-                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
-            }
-            else
-            {
-                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 0, 1);
-            }
-        }
-        break;
-        case 3:
-        {
-            /* XXOO */
-            /* OOXX */
-            m = ((second) % 2);
             for(n = 0; n < LED_POS_MAX; n++)
             {
-                if(n < (LED_POS_MAX / 2))
-                {
-                    led_putb(n, LED_SEGB_SET(LED_SEGB_DP), m, 1);
-                }
-                else
-                {
-                    led_putb(n, LED_SEGB_SET(LED_SEGB_DP), !m, 1);
-                }
-            }
-        }
-        break;
-        case 4:
-        {
-            /* XOOX */
-            /* OXXO */
-            m = ((second) % 2);
-            for(n = 0; n < LED_POS_MAX; n++)
-            {
-                if((n % (LED_POS_MAX - 1)) == 0)
-                {
-                    led_putb(n, LED_SEGB_SET(LED_SEGB_DP), m, 1);
-                }
-                else
-                {
-                    led_putb(n, LED_SEGB_SET(LED_SEGB_DP), !m, 1);
-                }
-            }
-        }
-        break;
-        default:
-        {
-            /* X--- */
-            /* -X-- */
-            /* --X- */
-            /* ---X */
-            for(n = 0; n < LED_POS_MAX; n++)
-            {
-                if(((second) % LED_POS_MAX) == n)
+                if(n <= m)
                 {
                     led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
                 }
@@ -327,7 +249,85 @@ void show_hhmm_second(uchar second, uchar mode)
                 }
             }
         }
-        break;
+        else
+        {
+            for(n = 0; n < LED_POS_MAX; n++)
+            {
+                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 0, 1);
+            }
+        }
+    }
+    break;
+    case 2:
+    {
+        /* -X-- */
+        /* -O-- */
+        n = (LED_POS_MAX / 2) - 1;
+        if(((second) % 2) == 0)
+        {
+            led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
+        }
+        else
+        {
+            led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 0, 1);
+        }
+    }
+    break;
+    case 3:
+    {
+        /* XXOO */
+        /* OOXX */
+        m = ((second) % 2);
+        for(n = 0; n < LED_POS_MAX; n++)
+        {
+            if(n < (LED_POS_MAX / 2))
+            {
+                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), m, 1);
+            }
+            else
+            {
+                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), !m, 1);
+            }
+        }
+    }
+    break;
+    case 4:
+    {
+        /* XOOX */
+        /* OXXO */
+        m = ((second) % 2);
+        for(n = 0; n < LED_POS_MAX; n++)
+        {
+            if((n % (LED_POS_MAX - 1)) == 0)
+            {
+                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), m, 1);
+            }
+            else
+            {
+                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), !m, 1);
+            }
+        }
+    }
+    break;
+    default:
+    {
+        /* X--- */
+        /* -X-- */
+        /* --X- */
+        /* ---X */
+        for(n = 0; n < LED_POS_MAX; n++)
+        {
+            if(((second) % LED_POS_MAX) == n)
+            {
+                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
+            }
+            else
+            {
+                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 0, 1);
+            }
+        }
+    }
+    break;
     }
 }
 
@@ -351,7 +351,7 @@ void show_main_page(rtc_time_t *tm, uchar page, uchar mode)
         led_puti(2, (tm->minute / 10), 1);
         led_puti(3, (tm->minute % 10), 1);
 
-        //sprintf(disp_str, "%bu%bu%bu%bu", (tm->hour / 10), (tm->hour % 10), 
+        //sprintf(disp_str, "%bu%bu%bu%bu", (tm->hour / 10), (tm->hour % 10),
         //    (tm->minute / 10), (tm->minute % 10));
         //led_puts(0, disp_str, 1);
         show_hhmm_second(tm->second, mode);
@@ -387,7 +387,7 @@ void show_main_page(rtc_time_t *tm, uchar page, uchar mode)
         led_puti(2, (tm->day / 10), 1);
         led_puti(3, (tm->day % 10), 1);
 
-        //sprintf(disp_str, "%bu%bu%bu%bu", (tm->month / 10), (tm->month % 10), 
+        //sprintf(disp_str, "%bu%bu%bu%bu", (tm->month / 10), (tm->month % 10),
         //    (tm->day / 10), (tm->day % 10));
         //led_puts(0, disp_str, 1);
         break;
@@ -399,7 +399,7 @@ void show_main_page(rtc_time_t *tm, uchar page, uchar mode)
         led_puti(2, (tm->week % 10), 1);
         led_puti(3, (LED_SEG_BCG), 1);
 
-        //sprintf(disp_str, " {%bu}", /*(((tm->week % 10) > 5) ? "-" : " "),*/ 
+        //sprintf(disp_str, " {%bu}", /*(((tm->week % 10) > 5) ? "-" : " "),*/
         //    (tm->week % 10));
         //led_puts(0, disp_str, 1);
         break;
@@ -1014,7 +1014,7 @@ void main(void)
 
             if(time_t.second == 0)
             {
-               if((time_t.minute % DEF_SYS_REMIND_TMR) == 0)
+                if((time_t.minute % DEF_SYS_REMIND_TMR) == 0)
                 {
                     page_menu_cnt = PAGE_MENU_REMIND;
                     main_autoexit_timer = 0;
