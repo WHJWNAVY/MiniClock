@@ -1,16 +1,29 @@
-# MIniClock 使用说明
+# MIniClock
+
+## 美图欣赏
 
 ![MiniClock](./media/miniclock_a0.png)
 ![MiniClock](./media/miniclock_a1.png)
+
+## 实物图
 ![MiniClock](./media/IMG_20190424_221545_1_compressed.jpg)
 ![MiniClock](./media/IMG_20190427_181814_1_compressed.jpg)
 ![MiniClock](./media/IMG_20190427_181755_1_compressed.jpg)
 ![MiniClock](./media/IMG_20190424_221558_1_compressed.jpg)
 ![MiniClock](./media/IMG_20190424_221613_1_compressed.jpg)
 
+## 原理图&PCB
+
+* ***[MiniClock_SCH_01_190419B.pdf](./doc/MiniClock_SCH_01_190419B.pdf)***
+
 ![MiniClock](./doc/miniclock_sch.png)
+
+* ***[Gerber_MINICLOCK_PCB_02_20190419231404.zip](./doc/MiniClock_PCB_Rev190417B/Gerber_MINICLOCK_PCB_02_20190419231404.zip)***
+
 ![MiniClock](./doc/miniclock_pcba.png)
 ![MiniClock](./doc/miniclock_pcbb.png)
+
+* ***[LCEDA OpenHW PCB & SCH](https://lceda.cn/whjwnavy/led-miniclock)***
 
 ## 页面逻辑
 
@@ -19,6 +32,10 @@
 ## 设置代码
 
 ![MiniClock](./doc/miniclock_setcode.png)
+
+
+
+# 使用说明
 
 ## 查看
 
