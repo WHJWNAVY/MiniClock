@@ -10,9 +10,18 @@
 #define DEF_SYS_LED_FPS      (100u)
 #define DEF_SYS_LED_FLASH    (3u)
 #define DEF_SYS_LED_MIRROR   (0u)
+
+#define DEF_SYS_MAIN_MODE    (0u)
+#define SYS_MAIN_MODE_MAX    (4u)
+
 #define DEF_SYS_AUTOEXIT_TMR (150u)
 #define DEF_SYS_LED_LIGHT    (5u)
 #define DEF_SYS_AUTO_SLEEP   (1u)
+
+#define DEF_SYS_REMIND_DELAY (20u)
+#define DEF_SYS_REMIND_TMR   (10u)
+
+
 
 //菜单列表
 typedef enum page_mode_e
@@ -25,6 +34,7 @@ typedef enum page_mode_e
     PAGE_MENU_SYSCFG,//系统设置
     PAGE_MENU_MAX,
     PAGE_MENU_POWER,
+    PAGE_MENU_REMIND,
 } page_mode_e;
 
 //计时模式
@@ -76,6 +86,7 @@ typedef enum set_system_page_e
     SET_SYSTEM_PAGE_MIN = 0x50u,
     SET_SYSTEM_PAGE_LIGHT = SET_SYSTEM_PAGE_MIN,
     SET_SYSTEM_PAGE_MIRROR,
+    SET_SYSTEM_PAGE_SECMOD,
     SET_SYSTEM_PAGE_MAX,
 } set_system_page_t;
 
@@ -113,6 +124,7 @@ typedef struct system_cfg_e
 {
     uint8 led_light;
     uint8 led_mirror;
+    uint8 main_mode;
     auto_sleep_t autosleep;
 } system_cfg_t;
 
@@ -124,6 +136,7 @@ void system_cfg_init(system_cfg_t *cfg)
     {
         cfg->led_light = DEF_SYS_LED_LIGHT;
         cfg->led_mirror = DEF_SYS_LED_MIRROR;
+        cfg->main_mode = DEF_SYS_MAIN_MODE;
         cfg->autosleep.on = DEF_SYS_AUTO_SLEEP;
         cfg->autosleep.s_hour = 22;
         cfg->autosleep.s_min = 30;
@@ -161,6 +174,7 @@ uint8 system_cfg_copy(system_cfg_t *dst, system_cfg_t *src)
     {
         dst->led_light = src->led_light;
         dst->led_mirror = src->led_mirror;
+        dst->main_mode = src->main_mode;
         dst->autosleep.on = src->autosleep.on;
         dst->autosleep.s_hour = src->autosleep.s_hour;
         dst->autosleep.s_min = src->autosleep.s_min;
@@ -208,9 +222,118 @@ void _menu_data_deal_(uchar *dat, uchar op, uchar max, uchar min)
     }
 }
 
-void show_main_page(rtc_time_t *tm, uchar page)
+void show_hhmm_second(uchar second, uchar mode)
 {
-    uchar n = 0;
+    uchar n = 0, m = 0;
+    switch (mode)
+    {
+    case 1:
+    {
+        /* ---- */
+        /* X--- */
+        /* XX-- */
+        /* XXX- */
+        /* XXXX */
+        m = ((second) % (LED_POS_MAX + 1));
+        if (m < LED_POS_MAX)
+        {
+            for(n = 0; n < LED_POS_MAX; n++)
+            {
+                if(n <= m)
+                {
+                    led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
+                }
+                else
+                {
+                    led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 0, 1);
+                }
+            }
+        }
+        else
+        {
+            for(n = 0; n < LED_POS_MAX; n++)
+            {
+                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 0, 1);
+            }
+        }
+    }
+    break;
+    case 2:
+    {
+        /* -X-- */
+        /* -O-- */
+        n = (LED_POS_MAX / 2) - 1;
+        if(((second) % 2) == 0)
+        {
+            led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
+        }
+        else
+        {
+            led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 0, 1);
+        }
+    }
+    break;
+    case 3:
+    {
+        /* XXOO */
+        /* OOXX */
+        m = ((second) % 2);
+        for(n = 0; n < LED_POS_MAX; n++)
+        {
+            if(n < (LED_POS_MAX / 2))
+            {
+                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), m, 1);
+            }
+            else
+            {
+                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), !m, 1);
+            }
+        }
+    }
+    break;
+    case 4:
+    {
+        /* XOOX */
+        /* OXXO */
+        m = ((second) % 2);
+        for(n = 0; n < LED_POS_MAX; n++)
+        {
+            if((n % (LED_POS_MAX - 1)) == 0)
+            {
+                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), m, 1);
+            }
+            else
+            {
+                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), !m, 1);
+            }
+        }
+    }
+    break;
+    default:
+    {
+        /* X--- */
+        /* -X-- */
+        /* --X- */
+        /* ---X */
+        for(n = 0; n < LED_POS_MAX; n++)
+        {
+            if(((second) % LED_POS_MAX) == n)
+            {
+                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
+            }
+            else
+            {
+                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 0, 1);
+            }
+        }
+    }
+    break;
+    }
+}
+
+void show_main_page(rtc_time_t *tm, uchar page, uchar mode)
+{
+    uchar n = 0, m = 0;
     char xdata disp_str[LED_POS_MAX + 1] = {0};
     if(tm == NULL)
     {
@@ -228,20 +351,10 @@ void show_main_page(rtc_time_t *tm, uchar page)
         led_puti(2, (tm->minute / 10), 1);
         led_puti(3, (tm->minute % 10), 1);
 
-        //sprintf(disp_str, "%bu%bu%bu%bu", (tm->hour / 10), (tm->hour % 10), (tm->minute / 10), (tm->minute % 10));
+        //sprintf(disp_str, "%bu%bu%bu%bu", (tm->hour / 10), (tm->hour % 10),
+        //    (tm->minute / 10), (tm->minute % 10));
         //led_puts(0, disp_str, 1);
-
-        for(n = 0; n < LED_POS_MAX; n++)
-        {
-            if(((tm->second) % LED_POS_MAX) == n)
-            {
-                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 1, 1);
-            }
-            else
-            {
-                led_putb(n, LED_SEGB_SET(LED_SEGB_DP), 0, 1);
-            }
-        }
+        show_hhmm_second(tm->second, mode);
         break;
     case MAIN_PAGE_TTSS:
         tm->second = tm->second % 100;
@@ -274,7 +387,8 @@ void show_main_page(rtc_time_t *tm, uchar page)
         led_puti(2, (tm->day / 10), 1);
         led_puti(3, (tm->day % 10), 1);
 
-        //sprintf(disp_str, "%bu%bu%bu%bu", (tm->month / 10), (tm->month % 10), (tm->day / 10), (tm->day % 10));
+        //sprintf(disp_str, "%bu%bu%bu%bu", (tm->month / 10), (tm->month % 10),
+        //    (tm->day / 10), (tm->day % 10));
         //led_puts(0, disp_str, 1);
         break;
     case MAIN_PAGE_DDDD:
@@ -285,7 +399,8 @@ void show_main_page(rtc_time_t *tm, uchar page)
         led_puti(2, (tm->week % 10), 1);
         led_puti(3, (LED_SEG_BCG), 1);
 
-        //sprintf(disp_str, " {%bu}", /*(((tm->week % 10) > 5) ? "-" : " "),*/ (tm->week % 10));
+        //sprintf(disp_str, " {%bu}", /*(((tm->week % 10) > 5) ? "-" : " "),*/
+        //    (tm->week % 10));
         //led_puts(0, disp_str, 1);
         break;
     default:
@@ -410,6 +525,11 @@ void show_system_set_page(system_cfg_t *cfg, uchar page, uchar op)
         dat = cfg->led_mirror;
         _menu_data_deal_(&dat, op, 1, 0);
         cfg->led_mirror = dat;
+        break;
+    case SET_SYSTEM_PAGE_SECMOD:
+        dat = cfg->main_mode;
+        _menu_data_deal_(&dat, op, SYS_MAIN_MODE_MAX, 0);
+        cfg->main_mode = dat;
         break;
     default:
         break;
@@ -579,6 +699,8 @@ void main(void)
 
     uint8 main_autoexit_timer = 0;
     uint8 main_mode_force = 0;
+
+    uint8 main_remind_tmr = 0;
 
     key_init();
     led_init();
@@ -880,7 +1002,7 @@ void main(void)
             switch(main_mode_cnt)
             {
             case MAIN_MODE_TIME:
-                show_main_page(&time_t, main_page_cnt);
+                show_main_page(&time_t, main_page_cnt, syscfg_t.main_mode);
                 break;
             case MAIN_MODE_TEMP:
                 show_temp_page();
@@ -889,6 +1011,18 @@ void main(void)
                 show_nonli_page(&time_t);
                 break;
             }
+
+            if(time_t.second == 0)
+            {
+                if((time_t.minute % DEF_SYS_REMIND_TMR) == 0)
+                {
+                    page_menu_cnt = PAGE_MENU_REMIND;
+                    main_autoexit_timer = 0;
+                    main_remind_tmr = 0;
+                    break;
+                }
+            }
+
             if(syscfg_t.autosleep.on)
             {
                 if((time_t.hour == syscfg_t.autosleep.s_hour) &&
@@ -897,6 +1031,7 @@ void main(void)
                     page_menu_cnt = PAGE_MENU_POWER;
                     main_autoexit_timer = 0;
                     led_close_door(30);
+                    break;
                 }
             }
             break;
@@ -926,6 +1061,33 @@ void main(void)
                     main_autoexit_timer = DEF_SYS_AUTOEXIT_TMR + 1;
                     led_open_door(30);
                 }
+            }
+            break;
+        case PAGE_MENU_REMIND:
+            if(main_remind_tmr < DEF_SYS_REMIND_DELAY)
+            {
+                if(main_remind_tmr == 0)
+                {
+                    led_close_door(30);
+                }
+                show_temp_page();
+                main_remind_tmr += 1;
+            }
+            else if(main_remind_tmr < (DEF_SYS_REMIND_DELAY * 2))
+            {
+                if(main_remind_tmr == DEF_SYS_REMIND_DELAY)
+                {
+                    led_close_door(30);
+                }
+                show_nonli_page(&time_t);
+                main_remind_tmr += 1;
+            }
+            else
+            {
+                led_close_door(30);
+                page_menu_cnt = PAGE_MENU_MAIN;
+                main_remind_tmr = 0;
+                main_autoexit_timer = DEF_SYS_AUTOEXIT_TMR + 1;
             }
             break;
         default:
