@@ -3,8 +3,7 @@
 
 #include "common.h"
 
-typedef enum gpio_i2c_e
-{
+typedef enum gpio_i2c_e {
     RTN_I2C_OK = 0,
     RTN_I2C_ERR,
 } gpio_i2c_t;

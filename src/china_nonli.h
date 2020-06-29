@@ -3,13 +3,12 @@
 
 #include "common.h"
 
-#define NONLI_STRING_LEN    8
+#define NONLI_STRING_LEN 8
 
-typedef struct china_nonli_s
-{
-    uchar month;//农历月
-    uchar intcal;//农历闰月
-    uchar day;//农历日
+typedef struct china_nonli_s {
+    uchar month;  //农历月
+    uchar intcal; //农历闰月
+    uchar day;    //农历日
 } china_nonli_t;
 
 /*****************************************************************************
