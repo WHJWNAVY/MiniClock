@@ -11,78 +11,73 @@ sfr     IAP_TRIG    =   0xC6;
 sfr     IAP_CONTR   =   0xC7;
 #endif
 
-#define WAIT_TIME_30M          0x80
-#define WAIT_TIME_24M          0x81
-#define WAIT_TIME_20M          0x82
-#define WAIT_TIME_12M          0x83
-#define WAIT_TIME_6M           0x84
-#define WAIT_TIME_3M           0x85
-#define WAIT_TIME_2M           0x86
-#define WAIT_TIME_1M           0x87
+#define WAIT_TIME_30M 0x80
+#define WAIT_TIME_24M 0x81
+#define WAIT_TIME_20M 0x82
+#define WAIT_TIME_12M 0x83
+#define WAIT_TIME_6M 0x84
+#define WAIT_TIME_3M 0x85
+#define WAIT_TIME_2M 0x86
+#define WAIT_TIME_1M 0x87
 
-#define WAIT_TIME              WAIT_TIME_24M
+#define WAIT_TIME WAIT_TIME_24M
 
-//Start address for STC8F2K16S2 EEPROM
-#define IAP_EEPROM_START_ADDR           (0x0000)
-#define IAP_EEPROM_END_ADDR             (0xBFFF)
-#define IAP_EEPROM_PAGE_SIZE            (512)//扇区大小512字节
-#define CONFIG_SAVE_FLAG_LEN            (5)
-#define CONFIG_FLAG_HEAD_ADD            (IAP_EEPROM_START_ADDR)
-#define CONFIG_SAVE_ADDRESS             (CONFIG_FLAG_HEAD_ADD + CONFIG_SAVE_FLAG_LEN)
-#define CONFIG_FLAG_TAIL_ADD(len)       (CONFIG_SAVE_ADDRESS + (len))
-uint8 code CONFIG_SAVE_FLAG[CONFIG_SAVE_FLAG_LEN + 1] =  {"WNAVY"};
+// Start address for STC8F2K16S2 EEPROM
+#define IAP_EEPROM_START_ADDR (0x0000)
+#define IAP_EEPROM_END_ADDR (0xBFFF)
+#define IAP_EEPROM_PAGE_SIZE (512)  //扇区大小512字节
+#define CONFIG_SAVE_FLAG_LEN (5)
+#define CONFIG_FLAG_HEAD_ADD (IAP_EEPROM_START_ADDR)
+#define CONFIG_SAVE_ADDRESS (CONFIG_FLAG_HEAD_ADD + CONFIG_SAVE_FLAG_LEN)
+#define CONFIG_FLAG_TAIL_ADD(len) (CONFIG_SAVE_ADDRESS + (len))
+uint8 code CONFIG_SAVE_FLAG[CONFIG_SAVE_FLAG_LEN + 1] = {"WNAVY"};
 
-void eeprom_iap_idle()
-{
-    IAP_CONTR = 0;                              //关闭IAP功能
-    IAP_CMD = 0;                                //清除命令寄存器
-    IAP_TRIG = 0;                               //清除触发寄存器
-    IAP_ADDRH = 0x80;                           //将地址设置到非IAP区域
+void eeprom_iap_idle() {
+    IAP_CONTR = 0;     //关闭IAP功能
+    IAP_CMD = 0;       //清除命令寄存器
+    IAP_TRIG = 0;      //清除触发寄存器
+    IAP_ADDRH = 0x80;  //将地址设置到非IAP区域
     IAP_ADDRL = 0;
 }
 
-uint8 eeprom_iap_read(uint16 addr)
-{
+uint8 eeprom_iap_read(uint16 addr) {
     uint8 dat;
 
-    IAP_CONTR = WAIT_TIME;                         //使能IAP
-    IAP_CMD = 1;                                //设置IAP读命令
-    IAP_ADDRL = addr;                           //设置IAP低地址
-    IAP_ADDRH = addr >> 8;                      //设置IAP高地址
-    IAP_TRIG = 0x5a;                            //写触发命令(0x5a)
-    IAP_TRIG = 0xa5;                            //写触发命令(0xa5)
+    IAP_CONTR = WAIT_TIME;  //使能IAP
+    IAP_CMD = 1;            //设置IAP读命令
+    IAP_ADDRL = addr;       //设置IAP低地址
+    IAP_ADDRH = addr >> 8;  //设置IAP高地址
+    IAP_TRIG = 0x5a;        //写触发命令(0x5a)
+    IAP_TRIG = 0xa5;        //写触发命令(0xa5)
     _nop_();
-    dat = IAP_DATA;                             //读IAP数据
-    eeprom_iap_idle();                                  //关闭IAP功能
+    dat = IAP_DATA;     //读IAP数据
+    eeprom_iap_idle();  //关闭IAP功能
 
     return dat;
 }
 
-void eeprom_iap_program(uint16 addr, uint8 dat)
-{
-    IAP_CONTR = WAIT_TIME;                      //使能IAP
-    IAP_CMD = 2;                                //设置IAP写命令
-    IAP_ADDRL = addr;                           //设置IAP低地址
-    IAP_ADDRH = addr >> 8;                      //设置IAP高地址
-    IAP_DATA = dat;                             //写IAP数据
-    IAP_TRIG = 0x5a;                            //写触发命令(0x5a)
-    IAP_TRIG = 0xa5;                            //写触发命令(0xa5)
+void eeprom_iap_program(uint16 addr, uint8 dat) {
+    IAP_CONTR = WAIT_TIME;  //使能IAP
+    IAP_CMD = 2;            //设置IAP写命令
+    IAP_ADDRL = addr;       //设置IAP低地址
+    IAP_ADDRH = addr >> 8;  //设置IAP高地址
+    IAP_DATA = dat;         //写IAP数据
+    IAP_TRIG = 0x5a;        //写触发命令(0x5a)
+    IAP_TRIG = 0xa5;        //写触发命令(0xa5)
     _nop_();
-    eeprom_iap_idle();                          //关闭IAP功能
+    eeprom_iap_idle();  //关闭IAP功能
 }
 
-void eeprom_iap_erase(uint16 addr)
-{
-    IAP_CONTR = WAIT_TIME;                      //使能IAP
-    IAP_CMD = 3;                                //设置IAP擦除命令
-    IAP_ADDRL = addr;                           //设置IAP低地址
-    IAP_ADDRH = addr >> 8;                      //设置IAP高地址
-    IAP_TRIG = 0x5a;                            //写触发命令(0x5a)
-    IAP_TRIG = 0xa5;                            //写触发命令(0xa5)
-    _nop_();                                    //
-    eeprom_iap_idle();                          //关闭IAP功能
+void eeprom_iap_erase(uint16 addr) {
+    IAP_CONTR = WAIT_TIME;  //使能IAP
+    IAP_CMD = 3;            //设置IAP擦除命令
+    IAP_ADDRL = addr;       //设置IAP低地址
+    IAP_ADDRH = addr >> 8;  //设置IAP高地址
+    IAP_TRIG = 0x5a;        //写触发命令(0x5a)
+    IAP_TRIG = 0xa5;        //写触发命令(0xa5)
+    _nop_();                //
+    eeprom_iap_idle();      //关闭IAP功能
 }
-
 
 #if 0
 void main()
@@ -103,27 +98,24 @@ void main()
  输出参数  : 无
  返 回 值  : RTN_OK-成功，RTN_ERR-失败
 *****************************************************************************/
-uchar cfgsave_flagchk(uchar cfglen)
-{
+uchar cfgsave_flagchk(uchar cfglen) {
     uint i;
 
-    if(cfglen <= 0)
-    {
+    if (cfglen <= 0) {
         return RTN_ERR;
     }
 
     delay_xus(100);
-    for (i = 0; i < CONFIG_SAVE_FLAG_LEN; i++) //check the config save flag
+    for (i = 0; i < CONFIG_SAVE_FLAG_LEN; i++)  // check the config save flag
     {
-        //check the head flag
-        if (eeprom_iap_read(CONFIG_FLAG_HEAD_ADD + i) != CONFIG_SAVE_FLAG[i])
-        {
+        // check the head flag
+        if (eeprom_iap_read(CONFIG_FLAG_HEAD_ADD + i) != CONFIG_SAVE_FLAG[i]) {
             return RTN_ERR;
         }
 
-        //check the tail flag
-        if (eeprom_iap_read(CONFIG_FLAG_TAIL_ADD(cfglen) + i) != CONFIG_SAVE_FLAG[i])
-        {
+        // check the tail flag
+        if (eeprom_iap_read(CONFIG_FLAG_TAIL_ADD(cfglen) + i) !=
+            CONFIG_SAVE_FLAG[i]) {
             return RTN_ERR;
         }
     }
@@ -138,24 +130,22 @@ uchar cfgsave_flagchk(uchar cfglen)
  输出参数  : 无
  返 回 值  : RTN_OK-成功，RTN_ERR-失败
 *****************************************************************************/
-uchar cfgsave_flagwrite(uchar cfglen)
-{
+uchar cfgsave_flagwrite(uchar cfglen) {
     uint i;
 
-    if(cfglen <= 0)
-    {
+    if (cfglen <= 0) {
         return RTN_ERR;
     }
 
     delay_xus(100);
-    for (i = 0; i < CONFIG_SAVE_FLAG_LEN; i++)
-    {
-        //write the head flag
-        eeprom_iap_program(CONFIG_FLAG_HEAD_ADD + i, (uchar)(CONFIG_SAVE_FLAG[i]));
-        //write the tail flag
-        eeprom_iap_program(CONFIG_FLAG_TAIL_ADD(cfglen) + i, (uchar)(CONFIG_SAVE_FLAG[i]));
+    for (i = 0; i < CONFIG_SAVE_FLAG_LEN; i++) {
+        // write the head flag
+        eeprom_iap_program(CONFIG_FLAG_HEAD_ADD + i,
+                           (uchar)(CONFIG_SAVE_FLAG[i]));
+        // write the tail flag
+        eeprom_iap_program(CONFIG_FLAG_TAIL_ADD(cfglen) + i,
+                           (uchar)(CONFIG_SAVE_FLAG[i]));
     }
-
 
     return RTN_OK;
 }
@@ -167,25 +157,22 @@ uchar cfgsave_flagwrite(uchar cfglen)
  输出参数  : config 指向保存配置的指针
  返 回 值  : RTN_OK-成功，RTN_ERR-失败
 *****************************************************************************/
-uchar cfgsave_read(uchar *config, uint len)
-{
+uchar cfgsave_read(uchar *config, uint len) {
     uint i;
 
-    if((config == NULL) || (len <= 0))
-    {
+    if ((config == NULL) || (len <= 0)) {
         return RTN_ERR;
     }
 
-    if(cfgsave_flagchk(len) != RTN_OK)//check the config save flag
+    if (cfgsave_flagchk(len) != RTN_OK)  // check the config save flag
     {
         return RTN_ERR;
     }
 
     delay_xus(100);
 
-    for(i = 0; i < len; i++)
-    {
-        //config[i] = eeprom_iap_read(CONFIG_SAVE_ADDRESS + i);
+    for (i = 0; i < len; i++) {
+        // config[i] = eeprom_iap_read(CONFIG_SAVE_ADDRESS + i);
         *(config + i) = eeprom_iap_read(CONFIG_SAVE_ADDRESS + i);
     }
 
@@ -200,24 +187,21 @@ uchar cfgsave_read(uchar *config, uint len)
  输出参数  : 无
  返 回 值  : RTN_OK-成功，RTN_ERR-失败
 *****************************************************************************/
-uchar cfgsave_write(uchar *config, uint len)
-{
+uchar cfgsave_write(uchar *config, uint len) {
     uint i;
 
-    if((config == NULL) || (len <= 0))
-    {
+    if ((config == NULL) || (len <= 0)) {
         return RTN_ERR;
     }
 
     delay_xus(100);
 
     eeprom_iap_erase(CONFIG_FLAG_HEAD_ADD);
-    cfgsave_flagwrite(len);//write flag at the head and tail of the config
+    cfgsave_flagwrite(len);  // write flag at the head and tail of the config
 
     delay_xus(100);
 
-    for(i = 0; i < len; i++)
-    {
+    for (i = 0; i < len; i++) {
         eeprom_iap_program(CONFIG_SAVE_ADDRESS + i, (uchar)(*(config + i)));
     }
 
