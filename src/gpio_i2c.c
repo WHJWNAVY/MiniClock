@@ -4,7 +4,7 @@ sbit GPIO_I2C_SDA = P3 ^ 4;
 sbit GPIO_I2C_SCL = P3 ^ 3;
 
 /*********I2C延时4us***********/
-void gpio_i2c_wait(void)  // 5us, @11.0592MHz
+void gpio_i2c_wait(void) // 5us, @11.0592MHz
 {
     uchar i;
     _nop_();
@@ -78,12 +78,12 @@ void gpio_i2c_nack(void) {
 }
 
 /*********读取ACK信号*********/
-uchar gpio_i2c_waitack(void)  //返回为:1=有ACK,0=无ACK
+uchar gpio_i2c_waitack(void) //返回为:1=有ACK,0=无ACK
 {
     uchar cnt = 0;
     GPIO_I2C_SCL = 0;
     GPIO_I2C_SDA =
-        1;  //设置SDA为输入（其它类型的单片机需要配置IO输入输出寄存器）
+        1; //设置SDA为输入（其它类型的单片机需要配置IO输入输出寄存器）
     gpio_i2c_wait();
     GPIO_I2C_SCL = 1;
     gpio_i2c_wait();
@@ -100,7 +100,7 @@ uchar gpio_i2c_waitack(void)  //返回为:1=有ACK,0=无ACK
 }
 
 /************I2C发送一个字节*************/
-void gpio_i2c_sendbyte(uchar demand)  //数据从高位到低位//
+void gpio_i2c_sendbyte(uchar demand) //数据从高位到低位//
 {
     uchar i = 8;
 
@@ -117,18 +117,18 @@ void gpio_i2c_sendbyte(uchar demand)  //数据从高位到低位//
 }
 
 /*********I2C读入一字节*********/
-uchar gpio_i2c_recvbyte(void)  //数据从高位到低位//
+uchar gpio_i2c_recvbyte(void) //数据从高位到低位//
 {
     uchar i = 8;
     uchar ddata = 0;
     GPIO_I2C_SDA =
-        1;  //设置SDA为输入（其它类型的单片机需要配置IO输入输出寄存器）
+        1; //设置SDA为输入（其它类型的单片机需要配置IO输入输出寄存器）
     while (i--) {
-        ddata <<= 1;  //数据从高位开始读取
+        ddata <<= 1; //数据从高位开始读取
         GPIO_I2C_SCL = 0;
         gpio_i2c_wait();
         GPIO_I2C_SCL = 1;
-        gpio_i2c_wait();  //从高位开始 ddata|=GPIO_I2C_SDA;ddata<<=1
+        gpio_i2c_wait(); //从高位开始 ddata|=GPIO_I2C_SDA;ddata<<=1
         if (GPIO_I2C_SDA) {
             ddata |= 0x01;
         }
@@ -144,9 +144,9 @@ uchar gpio_i2c_write(uchar dev_addr, uchar addr, uchar dat) {
     }
     gpio_i2c_sendbyte(dev_addr);
     gpio_i2c_waitack();
-    gpio_i2c_sendbyte(addr);  //设置写地址
+    gpio_i2c_sendbyte(addr); //设置写地址
     gpio_i2c_waitack();
-    gpio_i2c_sendbyte(dat);  //写数据
+    gpio_i2c_sendbyte(dat); //写数据
     gpio_i2c_waitack();
     gpio_i2c_stop();
 
@@ -165,12 +165,12 @@ uchar gpio_i2c_read(uchar dev_addr, uchar addr) {
         gpio_i2c_stop();
         return RTN_I2C_ERR;
     }
-    gpio_i2c_sendbyte(addr);  //设置要读的地址
+    gpio_i2c_sendbyte(addr); //设置要读的地址
     gpio_i2c_waitack();
-    gpio_i2c_start();  //再次发送开始
+    gpio_i2c_start(); //再次发送开始
     gpio_i2c_sendbyte(dev_addr + 1);
     gpio_i2c_waitack();
-    dat = gpio_i2c_recvbyte();  //读数据
+    dat = gpio_i2c_recvbyte(); //读数据
     gpio_i2c_nack();
     gpio_i2c_stop();
     return dat;

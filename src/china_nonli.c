@@ -62,10 +62,9 @@ uchar china_nonli_get(rtc_time_t *tm, china_nonli_t *nonli) {
         return RTN_ERR;
     }
 
-    year = ((tm->year > 99) ? 99 : tm->year);  // 0-99
-    month =
-        ((tm->month > 12) ? 12 : ((tm->month < 1) ? 1 : tm->month));  // 1-12
-    day = ((tm->day > 31) ? 31 : ((tm->day < 1) ? 1 : tm->day));      // 1-31
+    year = ((tm->year > 99) ? 99 : tm->year);                            // 0-99
+    month = ((tm->month > 12) ? 12 : ((tm->month < 1) ? 1 : tm->month)); // 1-12
+    day = ((tm->day > 31) ? 31 : ((tm->day < 1) ? 1 : tm->day));         // 1-31
 
     // spring_ny 记录春节离当年元旦的天数
     // sun_ny    记录阳历日离当年元旦的天数。
@@ -85,7 +84,7 @@ uchar china_nonli_get(rtc_time_t *tm, china_nonli_t *nonli) {
     // index     记录从哪个月开始来计算
     // flag      是用来对闰月的特殊处理
     //判断阳历日在春节前还是春节后
-    if (sun_ny >= spring_ny)  //阳历日在春节后（含春节那天）
+    if (sun_ny >= spring_ny) //阳历日在春节后（含春节那天）
     {
         sun_ny -= spring_ny;
         month = 1;
@@ -106,7 +105,8 @@ uchar china_nonli_get(rtc_time_t *tm, china_nonli_t *nonli) {
                 ((LUNAR_CALENDAR_TABLE[year /* - 1901*/] & 0xF00000) >> 20)) {
                 flag = ~flag;
 
-                if (flag == 0) month++;
+                if (flag == 0)
+                    month++;
             } else
                 month++;
 
@@ -118,7 +118,7 @@ uchar china_nonli_get(rtc_time_t *tm, china_nonli_t *nonli) {
         }
 
         day = sun_ny + 1;
-    } else  //阳历日在春节前
+    } else //阳历日在春节前
     {
         spring_ny -= sun_ny;
         year--;
@@ -141,7 +141,8 @@ uchar china_nonli_get(rtc_time_t *tm, china_nonli_t *nonli) {
             spring_ny -= stday_cnt;
             index--;
 
-            if (flag == 0) month--;
+            if (flag == 0)
+                month--;
 
             if (month ==
                 ((LUNAR_CALENDAR_TABLE[year /* - 1901*/] & 0xF00000) >> 20))

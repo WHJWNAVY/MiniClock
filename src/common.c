@@ -7,7 +7,7 @@
  输出参数  : 无
  返 回 值  : 无
 *****************************************************************************/
-void delay_xms(uint x)  //@24MHz
+void delay_xms(uint x) //@24MHz
 {
     uchar i = 0, j = 0;
     while (x--) {
@@ -27,7 +27,7 @@ void delay_xms(uint x)  //@24MHz
  输出参数  : 无
  返 回 值  : 无
 *****************************************************************************/
-void delay_xus(uint x)  //@24MHz, delay us
+void delay_xus(uint x) //@24MHz, delay us
 {
     uint8 i = 0;
     while (x--) {

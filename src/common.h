@@ -107,15 +107,15 @@ typedef uint16 uint;
 #endif
 
 #ifndef RTN_ERR
-#define RTN_ERR (uchar)1  //返回1
+#define RTN_ERR (uchar)1 //返回1
 #endif
 
 #ifndef RTN_OK
-#define RTN_OK (uchar)0  //返回0
+#define RTN_OK (uchar)0 //返回0
 #endif
 
 #ifndef RTN_NULL
-#define RTN_NULL (void*)0  //返回NULL
+#define RTN_NULL (void *)0 //返回NULL
 #endif
 
 typedef struct rtc_time_s {
@@ -123,16 +123,16 @@ typedef struct rtc_time_s {
     uchar week;
     uchar month;
     uchar day;
-    uchar hour;  // force 24 hour mode
+    uchar hour; // force 24 hour mode
     uchar minute;
     uchar second;
 } rtc_time_t;
 
 //方向
-#define DR_UP (uchar)0x10     // 0上
-#define DR_DOWN (uchar)0x11   // 1下
-#define DR_LEFT (uchar)0x12   // 2左
-#define DR_RIGHT (uchar)0x13  // 3右
+#define DR_UP (uchar)0x10    // 0上
+#define DR_DOWN (uchar)0x11  // 1下
+#define DR_LEFT (uchar)0x12  // 2左
+#define DR_RIGHT (uchar)0x13 // 3右
 
 /*==========Function Extern==========*/
 /*****************************************************************************

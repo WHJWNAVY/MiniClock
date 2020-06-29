@@ -11,17 +11,17 @@ sbit KEY_BTN_2 = P3 ^ 7;
 uint8 g_key_code = KEY_BTN_NULL;
 uint8 g_key_miiror = 0;
 
-void timer1_init(void)  // 1毫秒@27MHz
+void timer1_init(void) // 1毫秒@27MHz
 {
-    AUXR |= 0x40;  //定时器时钟1T模式
-    TMOD &= 0x0F;  //设置定时器模式
-    TMOD |= 0x10;  //设置定时器模式
-    TL1 = 0x88;    //设置定时初值
-    TH1 = 0x96;    //设置定时初值
-    TF1 = 0;       //清除TF1标志
-    ET1 = 1;       //使能定时器0中断
-    EA = 1;        //使能总中断
-    TR1 = 1;       //定时器1开始计时
+    AUXR |= 0x40; //定时器时钟1T模式
+    TMOD &= 0x0F; //设置定时器模式
+    TMOD |= 0x10; //设置定时器模式
+    TL1 = 0x88;   //设置定时初值
+    TH1 = 0x96;   //设置定时初值
+    TF1 = 0;      //清除TF1标志
+    ET1 = 1;      //使能定时器0中断
+    EA = 1;       //使能总中断
+    TR1 = 1;      //定时器1开始计时
 }
 
 void key_timer1(void) interrupt 3 {
@@ -29,9 +29,9 @@ void key_timer1(void) interrupt 3 {
     static uint16 key_1_tmr = 0;
     static uint16 key_2_tmr = 0;
 
-    TL1 = 0x88;  //设置定时初值
-    TH1 = 0x96;  //设置定时初值
-    TF1 = 0;     //清除TF1标志
+    TL1 = 0x88; //设置定时初值
+    TH1 = 0x96; //设置定时初值
+    TF1 = 0;    //清除TF1标志
 
     if (g_key_code == KEY_BTN_NULL) {
         if (KEY_BTN_0 == 0) {

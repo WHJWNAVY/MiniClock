@@ -26,9 +26,9 @@ typedef enum led_seg_e {
     LED_SEG_E,
     LED_SEG_F,
     LED_SEG_G,
-    LED_SEG_RSB,  // ]
-    LED_SEG_H,    // H
-    LED_SEG_HS,   // h
+    LED_SEG_RSB, // ]
+    LED_SEG_H,   // H
+    LED_SEG_HS,  // h
     LED_SEG_CS,
     LED_SEG_L,
     LED_SEG_P,

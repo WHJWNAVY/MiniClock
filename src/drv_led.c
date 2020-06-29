@@ -13,27 +13,27 @@ sbit LED_DIN = P1 ^ 4;
 #define MAX7219_ADDR_DIG5 (0x06)
 #define MAX7219_ADDR_DIG6 (0x07)
 #define MAX7219_ADDR_DIG7 (0x08)
-#define MAX7219_ADDR_DECODE_MODE (0x09)  //解码模式
-#define MAX7219_ADDR_INTENSITY (0x0A)    //亮度设置
-#define MAX7219_ADDR_SCAN_LIMIT (0x0B)   //扫描限位
-#define MAX7219_ADDR_SHUTDOWN (0x0C)     //关闭显示
-#define MAX7219_ADDR_DISPTEST (0x0F)     //测试模式
+#define MAX7219_ADDR_DECODE_MODE (0x09) //解码模式
+#define MAX7219_ADDR_INTENSITY (0x0A)   //亮度设置
+#define MAX7219_ADDR_SCAN_LIMIT (0x0B)  //扫描限位
+#define MAX7219_ADDR_SHUTDOWN (0x0C)    //关闭显示
+#define MAX7219_ADDR_DISPTEST (0x0F)    //测试模式
 
-#define MAX7219_DECODE_MODE_NONE (0x00)  //不解码
-#define MAX7219_DECODE_MODE_DIG0 (0x01)  //解码位0
-#define MAX7219_DECODE_MODE_0_3 (0x0F)   //解码位0-3
-#define MAX7219_DECODE_MODE_0_7 (0xFF)   //解码位0-7
+#define MAX7219_DECODE_MODE_NONE (0x00) //不解码
+#define MAX7219_DECODE_MODE_DIG0 (0x01) //解码位0
+#define MAX7219_DECODE_MODE_0_3 (0x0F)  //解码位0-3
+#define MAX7219_DECODE_MODE_0_7 (0xFF)  //解码位0-7
 
-#define MAX7219_SCAN_LIMIT_MAX (LED_POS_MAX - 1)  //只扫描前四个
+#define MAX7219_SCAN_LIMIT_MAX (LED_POS_MAX - 1) //只扫描前四个
 
 #define LED_SEG_NUM_HEX_MAX (0xFFFFu)
 #define LED_SEG_NUM_OCT_MAX (9999u)
 
 static uchar g_led_mirror = 0;
 uchar LED_DISP_MEM[LED_POS_MAX] = {0};
-uint16 LED_FLASH_TMR[LED_POS_MAX] = {0};  //闪烁
+uint16 LED_FLASH_TMR[LED_POS_MAX] = {0}; //闪烁
 
-#define LED_MIRROR_POS(pos) \
+#define LED_MIRROR_POS(pos)                                                    \
     (pos = (g_led_mirror ? (LED_POS_MAX - 1 - pos) : pos))
 #define LED_MIRROR_SEG(seg) (seg = (g_led_mirror ? LED_SEGB_MIRROR[seg] : seg))
 
@@ -53,58 +53,58 @@ uchar code LED_SEGB_MIRROR[LED_SEGB_MAX] = {LED_SEGB_G, LED_SEGB_C, LED_SEGB_B,
 
 uchar code LED_SEG_CODE[LED_SEG_MAX] = {
     u8bset(_sa) | u8bset(_sb) | u8bset(_sc) | u8bset(_sd) | u8bset(_se) |
-        u8bset(_sf),            // 0x7E,// 0
-    u8bset(_sb) | u8bset(_sc),  // 0x30,// 1 |
+        u8bset(_sf),           // 0x7E,// 0
+    u8bset(_sb) | u8bset(_sc), // 0x30,// 1 |
     u8bset(_sa) | u8bset(_sb) | u8bset(_sg) | u8bset(_se) |
-        u8bset(_sd),  // 0x6D,// 2
+        u8bset(_sd), // 0x6D,// 2
     u8bset(_sa) | u8bset(_sb) | u8bset(_sg) | u8bset(_sc) |
-        u8bset(_sd),                                        // 0x79,// 3
-    u8bset(_sf) | u8bset(_sg) | u8bset(_sb) | u8bset(_sc),  // 0x33,// 4
+        u8bset(_sd),                                       // 0x79,// 3
+    u8bset(_sf) | u8bset(_sg) | u8bset(_sb) | u8bset(_sc), // 0x33,// 4
     u8bset(_sa) | u8bset(_sf) | u8bset(_sg) | u8bset(_sc) |
-        u8bset(_sd),  // 0x5B,// 5
+        u8bset(_sd), // 0x5B,// 5
     u8bset(_sa) | u8bset(_sf) | u8bset(_se) | u8bset(_sd) | u8bset(_sc) |
-        u8bset(_sg),                          // 0x5F,// 6
-    u8bset(_sa) | u8bset(_sb) | u8bset(_sc),  // 0x70,// 7
+        u8bset(_sg),                         // 0x5F,// 6
+    u8bset(_sa) | u8bset(_sb) | u8bset(_sc), // 0x70,// 7
     u8bset(_sa) | u8bset(_sb) | u8bset(_sc) | u8bset(_sd) | u8bset(_se) |
-        u8bset(_sf) | u8bset(_sg),  // 0x7F,// 8
+        u8bset(_sf) | u8bset(_sg), // 0x7F,// 8
     u8bset(_sa) | u8bset(_sf) | u8bset(_sg) | u8bset(_sb) | u8bset(_sc) |
-        u8bset(_sd),  // 0x7B,// 9
+        u8bset(_sd), // 0x7B,// 9
     u8bset(_sa) | u8bset(_sf) | u8bset(_se) | u8bset(_sb) | u8bset(_sc) |
-        u8bset(_sg),  // 0x77,// A
+        u8bset(_sg), // 0x77,// A
     u8bset(_sf) | u8bset(_se) | u8bset(_sd) | u8bset(_sc) |
-        u8bset(_sg),                                        // 0x1F,// b
-    u8bset(_sa) | u8bset(_sf) | u8bset(_se) | u8bset(_sd),  // 0x4E,// C [
+        u8bset(_sg),                                       // 0x1F,// b
+    u8bset(_sa) | u8bset(_sf) | u8bset(_se) | u8bset(_sd), // 0x4E,// C [
     u8bset(_sb) | u8bset(_sc) | u8bset(_sd) | u8bset(_se) |
-        u8bset(_sg),  // 0x3D,// d
+        u8bset(_sg), // 0x3D,// d
     u8bset(_sa) | u8bset(_sf) | u8bset(_se) | u8bset(_sd) |
-        u8bset(_sg),                                        // 0x4F,// E
-    u8bset(_sa) | u8bset(_sf) | u8bset(_se) | u8bset(_sg),  // 0x47,// F
+        u8bset(_sg),                                       // 0x4F,// E
+    u8bset(_sa) | u8bset(_sf) | u8bset(_se) | u8bset(_sg), // 0x47,// F
     u8bset(_sa) | u8bset(_sf) | u8bset(_se) | u8bset(_sd) |
-        u8bset(_sc),                                        // 0x5E,// G
-    u8bset(_sa) | u8bset(_sb) | u8bset(_sc) | u8bset(_sd),  // 0x78,// ]
+        u8bset(_sc),                                       // 0x5E,// G
+    u8bset(_sa) | u8bset(_sb) | u8bset(_sc) | u8bset(_sd), // 0x78,// ]
     u8bset(_sf) | u8bset(_se) | u8bset(_sc) | u8bset(_sb) |
-        u8bset(_sg),                                        // 0x37,// H
-    u8bset(_sf) | u8bset(_se) | u8bset(_sc) | u8bset(_sg),  // 0x17,// h
-    u8bset(_sg) | u8bset(_se) | u8bset(_sd),                // 0x0D,// c
-    u8bset(_sf) | u8bset(_se) | u8bset(_sd),                // 0x0E,// L
+        u8bset(_sg),                                       // 0x37,// H
+    u8bset(_sf) | u8bset(_se) | u8bset(_sc) | u8bset(_sg), // 0x17,// h
+    u8bset(_sg) | u8bset(_se) | u8bset(_sd),               // 0x0D,// c
+    u8bset(_sf) | u8bset(_se) | u8bset(_sd),               // 0x0E,// L
     u8bset(_sa) | u8bset(_sb) | u8bset(_sg) | u8bset(_sf) |
-        u8bset(_se),                                        // 0x67,// P
-    u8bset(_sg) | u8bset(_sc) | u8bset(_sd) | u8bset(_se),  // 0x1D,// o
-    u8bset(_sa) | u8bset(_sf),                              // 0x42,//AF
-    u8bset(_sa) | u8bset(_sb),                              // 0x60,//AB
-    u8bset(_sd) | u8bset(_se),                              // 0x0C,//DE
-    u8bset(_sc) | u8bset(_sd),                              // 0x18,//CD
-    u8bset(_sb) | u8bset(_sc) | u8bset(_sg),                // 0x31,//BCG
-    u8bset(_se) | u8bset(_sf) | u8bset(_sg),                // 0x07,//EFG
-    u8bset(_sp),                                            // 0x80,// DP段
-    u8bset(_sa),                                            // 0x40,// A段
-    u8bset(_sb),                                            // 0x20,// B段
-    u8bset(_sc),                                            // 0x10,// C段
-    u8bset(_sd),                                            // 0x08,// D段
-    u8bset(_se),                                            // 0x04,// E段
-    u8bset(_sf),                                            // 0x02,// F段
-    u8bset(_sg),                                            // 0x01,// G段 -
-    0x00,                                                   // Space
+        u8bset(_se),                                       // 0x67,// P
+    u8bset(_sg) | u8bset(_sc) | u8bset(_sd) | u8bset(_se), // 0x1D,// o
+    u8bset(_sa) | u8bset(_sf),                             // 0x42,//AF
+    u8bset(_sa) | u8bset(_sb),                             // 0x60,//AB
+    u8bset(_sd) | u8bset(_se),                             // 0x0C,//DE
+    u8bset(_sc) | u8bset(_sd),                             // 0x18,//CD
+    u8bset(_sb) | u8bset(_sc) | u8bset(_sg),               // 0x31,//BCG
+    u8bset(_se) | u8bset(_sf) | u8bset(_sg),               // 0x07,//EFG
+    u8bset(_sp),                                           // 0x80,// DP段
+    u8bset(_sa),                                           // 0x40,// A段
+    u8bset(_sb),                                           // 0x20,// B段
+    u8bset(_sc),                                           // 0x10,// C段
+    u8bset(_sd),                                           // 0x08,// D段
+    u8bset(_se),                                           // 0x04,// E段
+    u8bset(_sf),                                           // 0x02,// F段
+    u8bset(_sg),                                           // 0x01,// G段 -
+    0x00,                                                  // Space
 };
 
 void max7219_writeb(uchar dat) {
@@ -134,7 +134,7 @@ void max7219_init(void) {
     max7219_write(MAX7219_ADDR_DECODE_MODE, MAX7219_DECODE_MODE_NONE);
     max7219_write(MAX7219_ADDR_INTENSITY, LED_MAX_LIGHT);
     max7219_write(MAX7219_ADDR_SCAN_LIMIT,
-                  MAX7219_SCAN_LIMIT_MAX);  // Display digits 0 1 2 3
+                  MAX7219_SCAN_LIMIT_MAX); // Display digits 0 1 2 3
     max7219_write(MAX7219_ADDR_SHUTDOWN, 0x01);
     max7219_write(MAX7219_ADDR_DISPTEST, 0x00);
 }
@@ -149,14 +149,14 @@ uint8 g_led_open = LED_OPEN_NULL;
 
 void led_open(void) {
     if (g_led_open != LED_OPEN_TRUE) {
-        max7219_write(MAX7219_ADDR_SHUTDOWN, 0x01);  //正常模式(掉电模式关)
+        max7219_write(MAX7219_ADDR_SHUTDOWN, 0x01); //正常模式(掉电模式关)
         g_led_open = LED_OPEN_TRUE;
     }
 }
 
 void led_close(void) {
     if (g_led_open != LED_OPEN_FALSE) {
-        max7219_write(MAX7219_ADDR_SHUTDOWN, 0x00);  //正常模式(掉电模式开)
+        max7219_write(MAX7219_ADDR_SHUTDOWN, 0x00); //正常模式(掉电模式开)
         g_led_open = LED_OPEN_FALSE;
     }
 }
@@ -165,7 +165,7 @@ uchar g_led_light = 0xff;
 void led_set_light(uchar n) {
     if (g_led_light != n) {
         g_led_light = n;
-        n = ((n > 0x0f) ? 0x0f : n);  // 0-15
+        n = ((n > 0x0f) ? 0x0f : n); // 0-15
         max7219_write(MAX7219_ADDR_INTENSITY, n);
     }
 }

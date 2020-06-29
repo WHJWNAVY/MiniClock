@@ -4,19 +4,18 @@ sbit DS1302_SCK = P2 ^ 0;
 sbit DS1302_IO = P2 ^ 1;
 sbit DS1302_CE = P2 ^ 2;
 
-uchar code write_add[7] = {
-    0x8c, 0x8a, 0x88, 0x86,
-    0x84, 0x82, 0x80};  // ds1302写时间地址,年周月日时分秒
+uchar code write_add[7] = {0x8c, 0x8a, 0x88, 0x86,
+                           0x84, 0x82, 0x80}; // ds1302写时间地址,年周月日时分秒
 uchar code read_add[7] = {0x8d, 0x8b, 0x89, 0x87,
-                          0x85, 0x83, 0x81};  // ds1302读时间地址,年周月日时分秒
+                          0x85, 0x83, 0x81}; // ds1302读时间地址,年周月日时分秒
 
 uchar code alarm_wr[7] = {
     0xc0, 0xc2, 0xc4, 0xc6,
-    0xc8, 0xca, 0xcc};  // ds1302写寄存器地址,年周月日时分秒
+    0xc8, 0xca, 0xcc}; // ds1302写寄存器地址,年周月日时分秒
 uchar code alarm_rd[7] = {
     0xc1, 0xc3, 0xc5, 0xc7,
-    0xc9, 0xcb, 0xcd};                  // ds1302读寄存器地址,年周月日时分秒
-uchar code alarm_on[2] = {0xce, 0xcf};  // 0-write, 1-read
+    0xc9, 0xcb, 0xcd};                 // ds1302读寄存器地址,年周月日时分秒
+uchar code alarm_on[2] = {0xce, 0xcf}; // 0-write, 1-read
 
 #define ALARM_FLAG_ON 0xF0
 #define ALARM_FLAG_OFF 0X0F
@@ -80,7 +79,8 @@ static uchar ds1302_read(uchar add) {
     for (i = 0; i < 8; i++) {
         value = value >> 1;
         DS1302_SCK = 0;
-        if (DS1302_IO) value = value | 0x80;
+        if (DS1302_IO)
+            value = value | 0x80;
         DS1302_SCK = 1;
     }
     DS1302_CE = 0;
@@ -103,18 +103,18 @@ void rtc_set_time(rtc_time_t *time) {
     uchar i = 0, j = 0;
     uchar rtc_time[7] = {0};
 
-    rtc_time[0] = ((time->year > 99) ? 99 : time->year);  // 0-99
+    rtc_time[0] = ((time->year > 99) ? 99 : time->year); // 0-99
     rtc_time[1] =
-        ((time->week > 7) ? 7 : ((time->week < 1) ? 1 : time->week));  // 1-7
+        ((time->week > 7) ? 7 : ((time->week < 1) ? 1 : time->week)); // 1-7
     rtc_time[2] =
         ((time->month > 12) ? 12
-                            : ((time->month < 1) ? 1 : time->month));  // 1-12
+                            : ((time->month < 1) ? 1 : time->month)); // 1-12
     rtc_time[3] =
-        ((time->day > 31) ? 31 : ((time->day < 1) ? 1 : time->day));  // 1-31
+        ((time->day > 31) ? 31 : ((time->day < 1) ? 1 : time->day)); // 1-31
     rtc_time[4] =
-        ((time->hour > 23) ? 23 : time->hour);  // 0-23,设置或读取为24小时制时间
-    rtc_time[5] = ((time->minute > 59) ? 59 : time->minute);  // 0-59
-    rtc_time[6] = ((time->second > 59) ? 59 : time->second);  // 0-59
+        ((time->hour > 23) ? 23 : time->hour); // 0-23,设置或读取为24小时制时间
+    rtc_time[5] = ((time->minute > 59) ? 59 : time->minute); // 0-59
+    rtc_time[6] = ((time->second > 59) ? 59 : time->second); // 0-59
 
     //把十进制数据转换成BCD码
     for (i = 0; i < 7; i++) {
@@ -126,11 +126,11 @@ void rtc_set_time(rtc_time_t *time) {
     rtc_time[4] = rtc_time[4] & 0x3f; /* force clock to 24 hour mode */
     rtc_time[6] = rtc_time[6] & 0x7f; /* Enable clock oscillator */
 
-    ds1302_write(0x8e, 0x00);  //去除写保护
+    ds1302_write(0x8e, 0x00); //去除写保护
     for (i = 0; i < 7; i++) {
         ds1302_write(write_add[i], rtc_time[i]);
     }
-    ds1302_write(0x8e, 0x80);  //加写保护
+    ds1302_write(0x8e, 0x80); //加写保护
 }
 
 /*****************************************************************************
@@ -151,20 +151,20 @@ void rtc_read_time(rtc_time_t *time) {
         rtc_time[i] = rtc_time[i] + temp * 10;
     }
 
-    time->year = ((rtc_time[0] > 99) ? 99 : rtc_time[0]);  // 0-99
+    time->year = ((rtc_time[0] > 99) ? 99 : rtc_time[0]); // 0-99
     time->week =
-        ((rtc_time[1] > 7) ? 7 : ((rtc_time[1] < 1) ? 1 : rtc_time[1]));  // 1-7
+        ((rtc_time[1] > 7) ? 7 : ((rtc_time[1] < 1) ? 1 : rtc_time[1])); // 1-7
     time->month =
         ((rtc_time[2] > 12) ? 12
-                            : ((rtc_time[2] < 1) ? 1 : rtc_time[2]));  // 1-12
+                            : ((rtc_time[2] < 1) ? 1 : rtc_time[2])); // 1-12
     time->day =
         ((rtc_time[3] > 31) ? 31
-                            : ((rtc_time[3] < 1) ? 1 : rtc_time[3]));  // 1-31
+                            : ((rtc_time[3] < 1) ? 1 : rtc_time[3])); // 1-31
     time->hour =
         ((rtc_time[4] > 23) ? 23
-                            : rtc_time[4]);  // 0-23,设置或读取为24小时制时间
-    time->minute = ((rtc_time[5] > 59) ? 59 : rtc_time[5]);  // 0-59
-    time->second = ((rtc_time[6] > 59) ? 59 : rtc_time[6]);  // 0-59
+                            : rtc_time[4]); // 0-23,设置或读取为24小时制时间
+    time->minute = ((rtc_time[5] > 59) ? 59 : rtc_time[5]); // 0-59
+    time->second = ((rtc_time[6] > 59) ? 59 : rtc_time[6]); // 0-59
 }
 
 void rtc_init(void) {
@@ -186,17 +186,17 @@ void alarm_set_time(rtc_time_t *time) {
     uchar i = 0, j = 0;
     uchar rtc_time[7] = {0};
 
-    rtc_time[0] = ((time->year > 99) ? 99 : time->year);  // 0-99
+    rtc_time[0] = ((time->year > 99) ? 99 : time->year); // 0-99
     rtc_time[1] =
-        ((time->week > 7) ? 7 : ((time->week < 1) ? 1 : time->week));  // 1-7
+        ((time->week > 7) ? 7 : ((time->week < 1) ? 1 : time->week)); // 1-7
     rtc_time[2] =
         ((time->month > 12) ? 12
-                            : ((time->month < 1) ? 1 : time->month));  // 1-12
+                            : ((time->month < 1) ? 1 : time->month)); // 1-12
     rtc_time[3] =
-        ((time->day > 31) ? 31 : ((time->day < 1) ? 1 : time->day));  // 1-31
-    rtc_time[4] = ((time->hour > 23) ? 23 : time->hour);              // 0-23
-    rtc_time[5] = ((time->minute > 59) ? 59 : time->minute);          // 0-59
-    rtc_time[6] = ((time->second > 59) ? 59 : time->second);          // 0-59
+        ((time->day > 31) ? 31 : ((time->day < 1) ? 1 : time->day)); // 1-31
+    rtc_time[4] = ((time->hour > 23) ? 23 : time->hour);             // 0-23
+    rtc_time[5] = ((time->minute > 59) ? 59 : time->minute);         // 0-59
+    rtc_time[6] = ((time->second > 59) ? 59 : time->second);         // 0-59
 
     //把十进制数据转换成BCD码
     for (i = 0; i < 7; i++) {
@@ -208,11 +208,11 @@ void alarm_set_time(rtc_time_t *time) {
     rtc_time[4] = rtc_time[4] & 0x3f; /* force clock to 24 hour mode */
     rtc_time[6] = rtc_time[6] & 0x7f; /* Enable clock oscillator */
 
-    ds1302_write(0x8e, 0x00);  //去除写保护
+    ds1302_write(0x8e, 0x00); //去除写保护
     for (i = 0; i < 7; i++) {
         ds1302_write(alarm_wr[i], rtc_time[i]);
     }
-    ds1302_write(0x8e, 0x80);  //加写保护
+    ds1302_write(0x8e, 0x80); //加写保护
 }
 
 /*****************************************************************************
@@ -233,19 +233,19 @@ void alarm_read_time(rtc_time_t *time) {
         rtc_time[i] = rtc_time[i] + temp * 10;
     }
 
-    time->year = ((rtc_time[0] > 99) ? 99 : rtc_time[0]);  // 0-99
+    time->year = ((rtc_time[0] > 99) ? 99 : rtc_time[0]); // 0-99
 
     time->week =
-        ((rtc_time[1] > 7) ? 7 : ((rtc_time[1] < 1) ? 1 : rtc_time[1]));  // 1-7
+        ((rtc_time[1] > 7) ? 7 : ((rtc_time[1] < 1) ? 1 : rtc_time[1])); // 1-7
     time->month =
         ((rtc_time[2] > 12) ? 12
-                            : ((rtc_time[2] < 1) ? 1 : rtc_time[2]));  // 1-12
+                            : ((rtc_time[2] < 1) ? 1 : rtc_time[2])); // 1-12
     time->day =
         ((rtc_time[3] > 31) ? 31
-                            : ((rtc_time[3] < 1) ? 1 : rtc_time[3]));  // 1-31
-    time->hour = ((rtc_time[4] > 23) ? 23 : rtc_time[4]);              // 0-23
-    time->minute = ((rtc_time[5] > 59) ? 59 : rtc_time[5]);            // 0-59
-    time->second = ((rtc_time[6] > 59) ? 59 : rtc_time[6]);            // 0-59
+                            : ((rtc_time[3] < 1) ? 1 : rtc_time[3])); // 1-31
+    time->hour = ((rtc_time[4] > 23) ? 23 : rtc_time[4]);             // 0-23
+    time->minute = ((rtc_time[5] > 59) ? 59 : rtc_time[5]);           // 0-59
+    time->second = ((rtc_time[6] > 59) ? 59 : rtc_time[6]);           // 0-59
 }
 
 /*****************************************************************************
@@ -264,9 +264,9 @@ void alarm_set_flag(uchar b) {
     flag = flag % 10;
     flag = flag + j * 16;
 
-    ds1302_write(0x8e, 0x00);  //去除写保护
+    ds1302_write(0x8e, 0x00); //去除写保护
     ds1302_write(alarm_on[0], flag);
-    ds1302_write(0x8e, 0x80);  //加写保护
+    ds1302_write(0x8e, 0x80); //加写保护
 }
 
 /*****************************************************************************
