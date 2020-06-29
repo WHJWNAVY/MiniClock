@@ -11,7 +11,7 @@
 #define DEF_SYS_LED_FLASH (3u)
 #define DEF_SYS_LED_MIRROR (0u)
 
-#define DEF_SYS_MAIN_MODE (0u)
+#define DEF_SYS_MAIN_MODE (4u)
 #define SYS_MAIN_MODE_MAX (4u)
 
 #define DEF_SYS_AUTOEXIT_TMR (150u)
@@ -335,9 +335,9 @@ void show_main_page(rtc_time_t *tm, uchar page, uchar mode) {
         tm->week = tm->week % 100;
 
         led_puti(0, (LED_SEG_NULL), 1);
-        led_puti(1, (LED_SEG_EFG), 1);
+        led_puti(1, (LED_SEG_HL), 1);
         led_puti(2, (tm->week % 10), 1);
-        led_puti(3, (LED_SEG_BCG), 1);
+        led_puti(3, (LED_SEG_HL), 1);
 
         // sprintf(disp_str, " {%bu}", /*(((tm->week % 10) > 5) ? "-" : "
         // "),*/
