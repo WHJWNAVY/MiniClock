@@ -827,6 +827,14 @@ void main(void) {
                         main_mode_force = 1;
                     }
                 }
+                if (page_menu_cnt == PAGE_MENU_SYSCFG) {
+                    system_cfg_init(&syscfg_set);//恢复出厂
+                    system_cfg_copy(&syscfg_t, &syscfg_set);
+                    system_cfg_write(&syscfg_t);
+                    system_cfg_apply(&syscfg_t);
+                    //保存配置后，设置项停止闪烁
+                    led_set_flashs(0, LED_POS_MAX, 0); //取消闪烁
+                }
             } break;
             case KEY_BTN_POWER_OFF: {
                 if (page_menu_cnt == PAGE_MENU_MAIN) {
