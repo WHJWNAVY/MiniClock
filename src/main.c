@@ -587,14 +587,6 @@ void show_nonli_page(rtc_time_t *time_t) {
     }
 }
 
-void error_hang(void) {
-    while (1) {
-        led_open_door(30);
-        led_close_door(30);
-        delay_xms(1000);
-    }
-}
-
 void main(void) {
     uchar i = 0, j = 0;
     uchar key_code = 0;
@@ -625,9 +617,7 @@ void main(void) {
 
     if (system_cfg_read(&syscfg_t) != RTN_OK) {
         system_cfg_init(&syscfg_t);
-        if (system_cfg_write(&syscfg_t) != RTN_OK) {
-            goto err;
-        }
+        system_cfg_write(&syscfg_t);
     }
     system_cfg_apply(&syscfg_t);
 
@@ -974,6 +964,4 @@ void main(void) {
         led_update();
         delay_xms(DEF_SYS_LED_FPS);
     }
-err:
-    error_hang();
 }
