@@ -27,6 +27,7 @@ sfr     IAP_CONTR   =   0xC7;
 #define IAP_EEPROM_END_ADDR (0xBFFF)
 #define IAP_EEPROM_PAGE_SIZE (512) //扇区大小512字节
 #define CONFIG_SAVE_FLAG_LEN (5)
+#define CONFIG_CRC_FLAG_LEN (4)
 #define CONFIG_FLAG_HEAD_ADD (IAP_EEPROM_START_ADDR)
 #define CONFIG_SAVE_ADDRESS (CONFIG_FLAG_HEAD_ADD + CONFIG_SAVE_FLAG_LEN)
 #define CONFIG_FLAG_TAIL_ADD(len) (CONFIG_SAVE_ADDRESS + (len))
@@ -99,7 +100,7 @@ void main()
  返 回 值  : RTN_OK-成功，RTN_ERR-失败
 *****************************************************************************/
 uchar cfgsave_flagchk(uchar cfglen) {
-    uint i;
+    uint i = 0;
 
     if (cfglen <= 0) {
         return RTN_ERR;
@@ -109,13 +110,32 @@ uchar cfgsave_flagchk(uchar cfglen) {
     for (i = 0; i < CONFIG_SAVE_FLAG_LEN; i++) // check the config save flag
     {
         // check the head flag
-        if (eeprom_iap_read(CONFIG_FLAG_HEAD_ADD + i) != CONFIG_SAVE_FLAG[i]) {
+        if (eeprom_iap_read(CONFIG_FLAG_HEAD_ADD + i) !=
+            (uchar)CONFIG_SAVE_FLAG[i]) {
             return RTN_ERR;
         }
+    }
 
-        // check the tail flag
+    return RTN_OK;
+}
+
+uchar cfgsave_crcchk(uchar *config, uchar cfglen) {
+    uint i = 0;
+    uint32 crc = 0;
+    uint8 *pcrc = 0;
+
+    if (cfglen <= 0) {
+        return RTN_ERR;
+    }
+
+    delay_xus(100);
+    crc = get_crc32(config, cfglen);
+    pcrc = (uint8 *)(&crc);
+    for (i = 0; i < CONFIG_CRC_FLAG_LEN; i++) // check the config crc flag
+    {
+        // check the crc flag
         if (eeprom_iap_read(CONFIG_FLAG_TAIL_ADD(cfglen) + i) !=
-            CONFIG_SAVE_FLAG[i]) {
+            (uchar)pcrc[i]) {
             return RTN_ERR;
         }
     }
@@ -131,7 +151,9 @@ uchar cfgsave_flagchk(uchar cfglen) {
  返 回 值  : RTN_OK-成功，RTN_ERR-失败
 *****************************************************************************/
 uchar cfgsave_flagwrite(uchar cfglen) {
-    uint i;
+    uint i = 0;
+    uint32 crc = 0;
+    uint8 *pcrc = 0;
 
     if (cfglen <= 0) {
         return RTN_ERR;
@@ -142,9 +164,26 @@ uchar cfgsave_flagwrite(uchar cfglen) {
         // write the head flag
         eeprom_iap_program(CONFIG_FLAG_HEAD_ADD + i,
                            (uchar)(CONFIG_SAVE_FLAG[i]));
-        // write the tail flag
-        eeprom_iap_program(CONFIG_FLAG_TAIL_ADD(cfglen) + i,
-                           (uchar)(CONFIG_SAVE_FLAG[i]));
+    }
+
+    return RTN_OK;
+}
+
+uchar cfgsave_crcwrite(uchar *config, uchar cfglen) {
+    uint i = 0;
+    uint32 crc = 0;
+    uint8 *pcrc = 0;
+
+    if (cfglen <= 0) {
+        return RTN_ERR;
+    }
+
+    delay_xus(100);
+    crc = get_crc32(config, cfglen);
+    pcrc = (uint8 *)(&crc);
+    for (i = 0; i < CONFIG_CRC_FLAG_LEN; i++) {
+        // write the crc32 tail flag
+        eeprom_iap_program(CONFIG_FLAG_TAIL_ADD(cfglen) + i, (uchar)(pcrc[i]));
     }
 
     return RTN_OK;
@@ -176,6 +215,12 @@ uchar cfgsave_read(uchar *config, uint len) {
         *(config + i) = eeprom_iap_read(CONFIG_SAVE_ADDRESS + i);
     }
 
+    delay_xus(100);
+    if (cfgsave_crcchk(config, len) != RTN_OK) // check the config crc flag
+    {
+        return RTN_ERR;
+    }
+
     return RTN_OK;
 }
 
@@ -197,13 +242,16 @@ uchar cfgsave_write(uchar *config, uint len) {
     delay_xus(100);
 
     eeprom_iap_erase(CONFIG_FLAG_HEAD_ADD);
-    cfgsave_flagwrite(len); // write flag at the head and tail of the config
+    cfgsave_flagwrite(len); // write flag at the head of the config
 
     delay_xus(100);
 
     for (i = 0; i < len; i++) {
         eeprom_iap_program(CONFIG_SAVE_ADDRESS + i, (uchar)(*(config + i)));
     }
+
+    delay_xus(100);
+    cfgsave_crcwrite(config, len); // write crc at the tail of the config
 
     return RTN_OK;
 }

@@ -153,4 +153,6 @@ extern void delay_xms(uint x);
 *****************************************************************************/
 extern void delay_xus(uint x);
 
+uint32 get_crc32(uint8 *dat, uint8 len);
+
 #endif

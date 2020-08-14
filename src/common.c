@@ -36,3 +36,13 @@ void delay_xus(uint x) //@24MHz, delay us
             ;
     }
 }
+
+uint32 get_crc32(uint8 *dat, uint8 len) {
+    uint8 i = 0;
+    uint32 crc = 0;
+    for (i = 0; i < len; i++) {
+        crc += dat[i];
+    }
+
+    return crc;
+}

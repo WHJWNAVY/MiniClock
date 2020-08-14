@@ -818,7 +818,7 @@ void main(void) {
                     }
                 }
                 if (page_menu_cnt == PAGE_MENU_SYSCFG) {
-                    system_cfg_init(&syscfg_set);//恢复出厂
+                    system_cfg_init(&syscfg_set); //恢复出厂
                     system_cfg_copy(&syscfg_t, &syscfg_set);
                     system_cfg_write(&syscfg_t);
                     system_cfg_apply(&syscfg_t);
