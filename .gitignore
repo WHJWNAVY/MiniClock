@@ -441,3 +441,8 @@ dkms.conf
 Objects/*
 Listings/*
 si/*
+
+# MDK
+*.uvproj
+*.uvopt
+*.uvgui*
