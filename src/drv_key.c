@@ -6,7 +6,7 @@ sbit KEY_BTN_2 = P3 ^ 7;
 
 #define KEY_BTN_SHORT_PRESS_CNT (10u)
 #define KEY_BTN_LONG_PRESS_CNT (1000u)
-#define KEY_BTN_LLONG_PRESS_CNT (2200u)
+#define KEY_BTN_LLONG_PRESS_CNT (4000u)
 
 uint8 g_key_code = KEY_BTN_NULL;
 uint8 g_key_miiror = 0;
