@@ -3,7 +3,7 @@
 sbit GPIO_I2C_SDA = P3 ^ 4;
 sbit GPIO_I2C_SCL = P3 ^ 3;
 
-/*********I2Cå»¶æ—¶4us***********/
+/*********I2CÑÓÊ±4us***********/
 void gpio_i2c_wait(void) // 5us, @11.0592MHz
 {
     uchar i;
@@ -26,27 +26,27 @@ void gpio_i2c_init(void) {
     delay_xms(10);
 }
 
-/********å¼€å¯I2Cæ€»çº¿********/
+/********¿ªÆôI2C×ÜÏß********/
 uchar gpio_i2c_start(void) {
     GPIO_I2C_SDA = 1;
     GPIO_I2C_SCL = 1;
     gpio_i2c_wait();
     // if(!GPIO_I2C_SDA)
     //{
-    //    return RTN_I2C_ERR;   //SDAçº¿ä¸ºä½ç”µå¹³åˆ™æ€»çº¿å¿™,é€€å‡º
+    //    return RTN_I2C_ERR;   //SDAÏßÎªµÍµçÆ½Ôò×ÜÏßÃ¦,ÍË³ö
     //}
     GPIO_I2C_SDA = 0;
     gpio_i2c_wait();
     // while(GPIO_I2C_SDA)
     //{
-    //    return RTN_I2C_ERR; //SDAçº¿ä¸ºé«˜ç”µå¹³åˆ™æ€»çº¿å‡ºé”™,é€€å‡º
+    //    return RTN_I2C_ERR; //SDAÏßÎª¸ßµçÆ½Ôò×ÜÏß³ö´í,ÍË³ö
     //}
     GPIO_I2C_SCL = 0;
     gpio_i2c_wait();
     return RTN_I2C_OK;
 }
 
-/********å…³é—­I2Cæ€»çº¿*******/
+/********¹Ø±ÕI2C×ÜÏß*******/
 void gpio_i2c_stop(void) {
     GPIO_I2C_SDA = 0;
     // GPIO_I2C_SCL = 0;
@@ -57,7 +57,7 @@ void gpio_i2c_stop(void) {
     gpio_i2c_wait();
 }
 
-/*********å‘é€ACK*********/
+/*********·¢ËÍACK*********/
 void gpio_i2c_ack(void) {
     GPIO_I2C_SDA = 0;
     GPIO_I2C_SCL = 0;
@@ -67,7 +67,7 @@ void gpio_i2c_ack(void) {
     GPIO_I2C_SCL = 0;
 }
 
-/*********å‘é€NOACK*********/
+/*********·¢ËÍNOACK*********/
 void gpio_i2c_nack(void) {
     GPIO_I2C_SDA = 1;
     GPIO_I2C_SCL = 0;
@@ -77,12 +77,12 @@ void gpio_i2c_nack(void) {
     GPIO_I2C_SCL = 0;
 }
 
-/*********è¯»å–ACKä¿¡å·*********/
-uchar gpio_i2c_waitack(void) //è¿”å›ä¸º:1=æœ‰ACK,0=æ— ACK
+/*********¶ÁÈ¡ACKĞÅºÅ*********/
+uchar gpio_i2c_waitack(void) //·µ»ØÎª:1=ÓĞACK,0=ÎŞACK
 {
     uchar cnt = 0;
     GPIO_I2C_SCL = 0;
-    GPIO_I2C_SDA = 1; //è®¾ç½®SDAä¸ºè¾“å…¥ï¼ˆå…¶å®ƒç±»å‹çš„å•ç‰‡æœºéœ€è¦é…ç½®IOè¾“å…¥è¾“å‡ºå¯„å­˜å™¨ï¼‰
+    GPIO_I2C_SDA = 1; //ÉèÖÃSDAÎªÊäÈë£¨ÆäËüÀàĞÍµÄµ¥Æ¬»úĞèÒªÅäÖÃIOÊäÈëÊä³ö¼Ä´æÆ÷£©
     gpio_i2c_wait();
     GPIO_I2C_SCL = 1;
     gpio_i2c_wait();
@@ -98,8 +98,8 @@ uchar gpio_i2c_waitack(void) //è¿”å›ä¸º:1=æœ‰ACK,0=æ— ACK
     return RTN_I2C_OK;
 }
 
-/************I2Cå‘é€ä¸€ä¸ªå­—èŠ‚*************/
-void gpio_i2c_sendbyte(uchar demand) //æ•°æ®ä»é«˜ä½åˆ°ä½ä½//
+/************I2C·¢ËÍÒ»¸ö×Ö½Ú*************/
+void gpio_i2c_sendbyte(uchar demand) //Êı¾İ´Ó¸ßÎ»µ½µÍÎ»//
 {
     uchar i = 8;
 
@@ -115,18 +115,18 @@ void gpio_i2c_sendbyte(uchar demand) //æ•°æ®ä»é«˜ä½åˆ°ä½ä½//
     GPIO_I2C_SCL = 0;
 }
 
-/*********I2Cè¯»å…¥ä¸€å­—èŠ‚*********/
-uchar gpio_i2c_recvbyte(void) //æ•°æ®ä»é«˜ä½åˆ°ä½ä½//
+/*********I2C¶ÁÈëÒ»×Ö½Ú*********/
+uchar gpio_i2c_recvbyte(void) //Êı¾İ´Ó¸ßÎ»µ½µÍÎ»//
 {
     uchar i = 8;
     uchar ddata = 0;
-    GPIO_I2C_SDA = 1; //è®¾ç½®SDAä¸ºè¾“å…¥ï¼ˆå…¶å®ƒç±»å‹çš„å•ç‰‡æœºéœ€è¦é…ç½®IOè¾“å…¥è¾“å‡ºå¯„å­˜å™¨ï¼‰
+    GPIO_I2C_SDA = 1; //ÉèÖÃSDAÎªÊäÈë£¨ÆäËüÀàĞÍµÄµ¥Æ¬»úĞèÒªÅäÖÃIOÊäÈëÊä³ö¼Ä´æÆ÷£©
     while (i--) {
-        ddata <<= 1; //æ•°æ®ä»é«˜ä½å¼€å§‹è¯»å–
+        ddata <<= 1; //Êı¾İ´Ó¸ßÎ»¿ªÊ¼¶ÁÈ¡
         GPIO_I2C_SCL = 0;
         gpio_i2c_wait();
         GPIO_I2C_SCL = 1;
-        gpio_i2c_wait(); //ä»é«˜ä½å¼€å§‹ ddata|=GPIO_I2C_SDA;ddata<<=1
+        gpio_i2c_wait(); //´Ó¸ßÎ»¿ªÊ¼ ddata|=GPIO_I2C_SDA;ddata<<=1
         if (GPIO_I2C_SDA) {
             ddata |= 0x01;
         }
@@ -135,23 +135,23 @@ uchar gpio_i2c_recvbyte(void) //æ•°æ®ä»é«˜ä½åˆ°ä½ä½//
     return ddata;
 }
 
-/******I2Cå‘æŒ‡å®šåœ°å€å†™ä¸€ä¸ªå­—èŠ‚******/
+/******I2CÏòÖ¸¶¨µØÖ·Ğ´Ò»¸ö×Ö½Ú******/
 uchar gpio_i2c_write(uchar dev_addr, uchar addr, uchar dat) {
     if (gpio_i2c_start() != RTN_I2C_OK) {
         return RTN_I2C_ERR;
     }
     gpio_i2c_sendbyte(dev_addr);
     gpio_i2c_waitack();
-    gpio_i2c_sendbyte(addr); //è®¾ç½®å†™åœ°å€
+    gpio_i2c_sendbyte(addr); //ÉèÖÃĞ´µØÖ·
     gpio_i2c_waitack();
-    gpio_i2c_sendbyte(dat); //å†™æ•°æ®
+    gpio_i2c_sendbyte(dat); //Ğ´Êı¾İ
     gpio_i2c_waitack();
     gpio_i2c_stop();
 
     return RTN_I2C_OK;
 }
 
-/******I2Cä»æŒ‡å®šåœ°å€è¯»ä¸€ä¸ªå­—èŠ‚******/
+/******I2C´ÓÖ¸¶¨µØÖ·¶ÁÒ»¸ö×Ö½Ú******/
 uchar gpio_i2c_read(uchar dev_addr, uchar addr) {
     uchar dat;
 
@@ -163,12 +163,12 @@ uchar gpio_i2c_read(uchar dev_addr, uchar addr) {
         gpio_i2c_stop();
         return RTN_I2C_ERR;
     }
-    gpio_i2c_sendbyte(addr); //è®¾ç½®è¦è¯»çš„åœ°å€
+    gpio_i2c_sendbyte(addr); //ÉèÖÃÒª¶ÁµÄµØÖ·
     gpio_i2c_waitack();
-    gpio_i2c_start(); //å†æ¬¡å‘é€å¼€å§‹
+    gpio_i2c_start(); //ÔÙ´Î·¢ËÍ¿ªÊ¼
     gpio_i2c_sendbyte(dev_addr + 1);
     gpio_i2c_waitack();
-    dat = gpio_i2c_recvbyte(); //è¯»æ•°æ®
+    dat = gpio_i2c_recvbyte(); //¶ÁÊı¾İ
     gpio_i2c_nack();
     gpio_i2c_stop();
     return dat;

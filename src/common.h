@@ -107,15 +107,15 @@ typedef uint16 uint;
 #endif
 
 #ifndef RTN_ERR
-#define RTN_ERR (uchar)1 //è¿”å›1
+#define RTN_ERR (uchar)1 //·µ»Ø1
 #endif
 
 #ifndef RTN_OK
-#define RTN_OK (uchar)0 //è¿”å›0
+#define RTN_OK (uchar)0 //·µ»Ø0
 #endif
 
 #ifndef RTN_NULL
-#define RTN_NULL (void *)0 //è¿”å›NULL
+#define RTN_NULL (void *)0 //·µ»ØNULL
 #endif
 
 typedef struct rtc_time_s {
@@ -128,28 +128,28 @@ typedef struct rtc_time_s {
     uchar second;
 } rtc_time_t;
 
-//æ–¹å‘
-#define DR_UP (uchar)0x10    // 0ä¸Š
-#define DR_DOWN (uchar)0x11  // 1ä¸‹
-#define DR_LEFT (uchar)0x12  // 2å·¦
-#define DR_RIGHT (uchar)0x13 // 3å³
+//·½Ïò
+#define DR_UP (uchar)0x10    // 0ÉÏ
+#define DR_DOWN (uchar)0x11  // 1ÏÂ
+#define DR_LEFT (uchar)0x12  // 2×ó
+#define DR_RIGHT (uchar)0x13 // 3ÓÒ
 
 /*==========Function Extern==========*/
 /*****************************************************************************
- å‡½ æ•° å  : delay_xms
- åŠŸèƒ½æè¿°  : æ¯«ç§’å»¶æ—¶
- è¾“å…¥å‚æ•°  : x  å»¶æ—¶æ—¶é—´,æ¯«ç§’
- è¾“å‡ºå‚æ•°  : æ— 
- è¿” å› å€¼  : æ— 
+ º¯ Êı Ãû  : delay_xms
+ ¹¦ÄÜÃèÊö  : ºÁÃëÑÓÊ±
+ ÊäÈë²ÎÊı  : x  ÑÓÊ±Ê±¼ä,ºÁÃë
+ Êä³ö²ÎÊı  : ÎŞ
+ ·µ »Ø Öµ  : ÎŞ
 *****************************************************************************/
 extern void delay_xms(uint x);
 
 /*****************************************************************************
- å‡½ æ•° å  : delay_xus
- åŠŸèƒ½æè¿°  : å¾®ç§’å»¶æ—¶
- è¾“å…¥å‚æ•°  : x  å»¶æ—¶æ—¶é—´,å¾®ç§’
- è¾“å‡ºå‚æ•°  : æ— 
- è¿” å› å€¼  : æ— 
+ º¯ Êı Ãû  : delay_xus
+ ¹¦ÄÜÃèÊö  : Î¢ÃëÑÓÊ±
+ ÊäÈë²ÎÊı  : x  ÑÓÊ±Ê±¼ä,Î¢Ãë
+ Êä³ö²ÎÊı  : ÎŞ
+ ·µ »Ø Öµ  : ÎŞ
 *****************************************************************************/
 extern void delay_xus(uint x);
 
