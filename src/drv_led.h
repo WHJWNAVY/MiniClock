@@ -92,8 +92,7 @@ extern uchar led_putc(uchar pos, char chr, uchar col);
 extern uchar led_puts_dp(uchar pos, const uchar *chs, uchar col, uchar dp);
 extern uchar led_puts(uchar pos, const uchar *chs, uchar col);
 extern uchar led_putb(uchar pos, uchar segb, uchar col, uchar andor);
-extern uchar led_putbs(uchar pos, uchar *segb, uchar len, uchar col,
-                       uchar andor);
+extern uchar led_putbs(uchar pos, uchar *segb, uchar len, uchar col, uchar andor);
 extern uchar led_puti(uchar pos, uchar segi, uchar col);
 extern uchar led_putis(uchar pos, uchar *segi, uchar len, uchar col);
 

@@ -82,8 +82,7 @@ uchar gpio_i2c_waitack(void) //返回为:1=有ACK,0=无ACK
 {
     uchar cnt = 0;
     GPIO_I2C_SCL = 0;
-    GPIO_I2C_SDA =
-        1; //设置SDA为输入（其它类型的单片机需要配置IO输入输出寄存器）
+    GPIO_I2C_SDA = 1; //设置SDA为输入（其它类型的单片机需要配置IO输入输出寄存器）
     gpio_i2c_wait();
     GPIO_I2C_SCL = 1;
     gpio_i2c_wait();
@@ -121,8 +120,7 @@ uchar gpio_i2c_recvbyte(void) //数据从高位到低位//
 {
     uchar i = 8;
     uchar ddata = 0;
-    GPIO_I2C_SDA =
-        1; //设置SDA为输入（其它类型的单片机需要配置IO输入输出寄存器）
+    GPIO_I2C_SDA = 1; //设置SDA为输入（其它类型的单片机需要配置IO输入输出寄存器）
     while (i--) {
         ddata <<= 1; //数据从高位开始读取
         GPIO_I2C_SCL = 0;

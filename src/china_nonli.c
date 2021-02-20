@@ -15,30 +15,19 @@ uint32 code LUNAR_CALENDAR_TABLE[/*199*/] = {
 #else
     /*0x04974F, 0x064B44, 0x36A537, 0x0EA54A, 0x86B2BF, 0x05AC53, 0x0AB647, 0x5936BC, 0x092E50,*/0x0C9645, /*1991-2000*/
 #endif
-    0x4D4AB8, 0x0D4A4C, 0x0DA541, 0x25AAB6, 0x056A49,
-    0x7AADBD, 0x025D52, 0x092D47, 0x5C95BA, 0x0A954E, /*2001-2010*/
-    0x0B4A43, 0x4B5537, 0x0AD54A, 0x955ABF, 0x04BA53,
-    0x0A5B48, 0x652BBC, 0x052B50, 0x0A9345, 0x474AB9, /*2011-2020*/
-    0x06AA4C, 0x0AD541, 0x24DAB6, 0x04B64A, 0x69573D,
-    0x0A4E51, 0x0D2646, 0x5E933A, 0x0D534D, 0x05AA43, /*2021-2030*/
-    0x36B537, 0x096D4B, 0xB4AEBF, 0x04AD53, 0x0A4D48,
-    0x6D25BC, 0x0D254F, 0x0D5244, 0x5DAA38, 0x0B5A4C, /*2031-2040*/
-    0x056D41, 0x24ADB6, 0x049B4A, 0x7A4BBE, 0x0A4B51,
-    0x0AA546, 0x5B52BA, 0x06D24E, 0x0ADA42, 0x355B37, /*2041-2050*/
-    0x09374B, 0x8497C1, 0x049753, 0x064B48, 0x66A53C,
-    0x0EA54F, 0x06B244, 0x4AB638, 0x0AAE4C, 0x092E42, /*2051-2060*/
-    0x3C9735, 0x0C9649, 0x7D4ABD, 0x0D4A51, 0x0DA545,
-    0x55AABA, 0x056A4E, 0x0A6D43, 0x452EB7, 0x052D4B, /*2061-2070*/
-    0x8A95BF, 0x0A9553, 0x0B4A47, 0x6B553B, 0x0AD54F,
-    0x055A45, 0x4A5D38, 0x0A5B4C, 0x052B42, 0x3A93B6, /*2071-2080*/
-    0x069349, 0x7729BD, 0x06AA51, 0x0AD546, 0x54DABA,
-    0x04B64E, 0x0A5743, 0x452738, 0x0D264A, 0x8E933E, /*2081-2090*/
-    0x0D5252, 0x0DAA47, 0x66B53B, 0x056D4F, 0x04AE45,
-    0x4A4EB9, 0x0A4D4C, 0x0D1541, 0x2D92B5 /*2091-2099*/
+    0x4D4AB8, 0x0D4A4C, 0x0DA541, 0x25AAB6, 0x056A49, 0x7AADBD, 0x025D52, 0x092D47, 0x5C95BA, 0x0A954E, /*2001-2010*/
+    0x0B4A43, 0x4B5537, 0x0AD54A, 0x955ABF, 0x04BA53, 0x0A5B48, 0x652BBC, 0x052B50, 0x0A9345, 0x474AB9, /*2011-2020*/
+    0x06AA4C, 0x0AD541, 0x24DAB6, 0x04B64A, 0x69573D, 0x0A4E51, 0x0D2646, 0x5E933A, 0x0D534D, 0x05AA43, /*2021-2030*/
+    0x36B537, 0x096D4B, 0xB4AEBF, 0x04AD53, 0x0A4D48, 0x6D25BC, 0x0D254F, 0x0D5244, 0x5DAA38, 0x0B5A4C, /*2031-2040*/
+    0x056D41, 0x24ADB6, 0x049B4A, 0x7A4BBE, 0x0A4B51, 0x0AA546, 0x5B52BA, 0x06D24E, 0x0ADA42, 0x355B37, /*2041-2050*/
+    0x09374B, 0x8497C1, 0x049753, 0x064B48, 0x66A53C, 0x0EA54F, 0x06B244, 0x4AB638, 0x0AAE4C, 0x092E42, /*2051-2060*/
+    0x3C9735, 0x0C9649, 0x7D4ABD, 0x0D4A51, 0x0DA545, 0x55AABA, 0x056A4E, 0x0A6D43, 0x452EB7, 0x052D4B, /*2061-2070*/
+    0x8A95BF, 0x0A9553, 0x0B4A47, 0x6B553B, 0x0AD54F, 0x055A45, 0x4A5D38, 0x0A5B4C, 0x052B42, 0x3A93B6, /*2071-2080*/
+    0x069349, 0x7729BD, 0x06AA51, 0x0AD546, 0x54DABA, 0x04B64E, 0x0A5743, 0x452738, 0x0D264A, 0x8E933E, /*2081-2090*/
+    0x0D5252, 0x0DAA47, 0x66B53B, 0x056D4F, 0x04AE45, 0x4A4EB9, 0x0A4D4C, 0x0D1541, 0x2D92B5            /*2091-2099*/
 };
 
-uint code LUNAR_MONTH_ADD[12] = {0,   31,  59,  90,  120, 151,
-                                 181, 212, 243, 273, 304, 334};
+uint code LUNAR_MONTH_ADD[12] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
 
 /*****************************************************************************
  º¯ Êı Ãû  : china_nonli_get
@@ -91,8 +80,7 @@ uchar china_nonli_get(rtc_time_t *tm, china_nonli_t *nonli) {
         index = 1;
         flag = 0;
 
-        if ((LUNAR_CALENDAR_TABLE[year /* - 1901*/] &
-             (0x80000 >> (index - 1))) == 0)
+        if ((LUNAR_CALENDAR_TABLE[year /* - 1901*/] & (0x80000 >> (index - 1))) == 0)
             stday_cnt = 29;
         else
             stday_cnt = 30;
@@ -101,8 +89,7 @@ uchar china_nonli_get(rtc_time_t *tm, china_nonli_t *nonli) {
             sun_ny -= stday_cnt;
             index++;
 
-            if (month ==
-                ((LUNAR_CALENDAR_TABLE[year /* - 1901*/] & 0xF00000) >> 20)) {
+            if (month == ((LUNAR_CALENDAR_TABLE[year /* - 1901*/] & 0xF00000) >> 20)) {
                 flag = ~flag;
 
                 if (flag == 0)
@@ -110,8 +97,7 @@ uchar china_nonli_get(rtc_time_t *tm, china_nonli_t *nonli) {
             } else
                 month++;
 
-            if ((LUNAR_CALENDAR_TABLE[year /* - 1901*/] &
-                 (0x80000 >> (index - 1))) == 0)
+            if ((LUNAR_CALENDAR_TABLE[year /* - 1901*/] & (0x80000 >> (index - 1))) == 0)
                 stday_cnt = 29;
             else
                 stday_cnt = 30;
@@ -131,8 +117,7 @@ uchar china_nonli_get(rtc_time_t *tm, china_nonli_t *nonli) {
 
         flag = 0;
 
-        if ((LUNAR_CALENDAR_TABLE[year /* - 1901*/] &
-             (0x80000 >> (index - 1))) == 0)
+        if ((LUNAR_CALENDAR_TABLE[year /* - 1901*/] & (0x80000 >> (index - 1))) == 0)
             stday_cnt = 29;
         else
             stday_cnt = 30;
@@ -144,12 +129,10 @@ uchar china_nonli_get(rtc_time_t *tm, china_nonli_t *nonli) {
             if (flag == 0)
                 month--;
 
-            if (month ==
-                ((LUNAR_CALENDAR_TABLE[year /* - 1901*/] & 0xF00000) >> 20))
+            if (month == ((LUNAR_CALENDAR_TABLE[year /* - 1901*/] & 0xF00000) >> 20))
                 flag = ~flag;
 
-            if ((LUNAR_CALENDAR_TABLE[year /* - 1901*/] &
-                 (0x80000 >> (index - 1))) == 0)
+            if ((LUNAR_CALENDAR_TABLE[year /* - 1901*/] & (0x80000 >> (index - 1))) == 0)
                 stday_cnt = 29;
             else
                 stday_cnt = 30;

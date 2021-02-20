@@ -110,8 +110,7 @@ uchar cfgsave_flagchk(uchar cfglen) {
     for (i = 0; i < CONFIG_SAVE_FLAG_LEN; i++) // check the config save flag
     {
         // check the head flag
-        if (eeprom_iap_read(CONFIG_FLAG_HEAD_ADD + i) !=
-            (uchar)CONFIG_SAVE_FLAG[i]) {
+        if (eeprom_iap_read(CONFIG_FLAG_HEAD_ADD + i) != (uchar)CONFIG_SAVE_FLAG[i]) {
             return RTN_ERR;
         }
     }
@@ -134,8 +133,7 @@ uchar cfgsave_crcchk(uchar *config, uchar cfglen) {
     for (i = 0; i < CONFIG_CRC_FLAG_LEN; i++) // check the config crc flag
     {
         // check the crc flag
-        if (eeprom_iap_read(CONFIG_FLAG_TAIL_ADD(cfglen) + i) !=
-            (uchar)pcrc[i]) {
+        if (eeprom_iap_read(CONFIG_FLAG_TAIL_ADD(cfglen) + i) != (uchar)pcrc[i]) {
             return RTN_ERR;
         }
     }
@@ -162,8 +160,7 @@ uchar cfgsave_flagwrite(uchar cfglen) {
     delay_xus(100);
     for (i = 0; i < CONFIG_SAVE_FLAG_LEN; i++) {
         // write the head flag
-        eeprom_iap_program(CONFIG_FLAG_HEAD_ADD + i,
-                           (uchar)(CONFIG_SAVE_FLAG[i]));
+        eeprom_iap_program(CONFIG_FLAG_HEAD_ADD + i, (uchar)(CONFIG_SAVE_FLAG[i]));
     }
 
     return RTN_OK;
