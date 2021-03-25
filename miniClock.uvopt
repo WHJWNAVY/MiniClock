@@ -163,7 +163,7 @@
   </Target>
 
   <Group>
-    <GroupName>miniClock</GroupName>
+    <GroupName>main</GroupName>
     <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
