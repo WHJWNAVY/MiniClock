@@ -1,0 +1,27 @@
+{
+    "folders": [
+        {
+            "path": "src"
+        }
+    ],
+    "settings": {
+        "files.autoGuessEncoding": true,
+        "C_Cpp.default.includePath": [
+            "${workspaceFolder}"
+        ],
+        "C_Cpp.default.defines": [
+            "_DEBUG",
+            "UNICODE",
+            "_UNICODE",
+            "sbit=char",
+            "code=const",
+            "xdata=",
+            "data=",
+            "sfr=char",
+            "interrupt=",
+            "bit=char"
+        ],
+        "files.associations": {
+        }
+    }
+}
