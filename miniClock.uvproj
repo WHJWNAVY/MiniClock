@@ -13,14 +13,14 @@
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STC8F2K64S4</Device>
+          <Device>STC89C58RD+</Device>
           <Vendor>STC</Vendor>
-          <Cpu>IRAM(0-0xFF) XRAM(0-0x07FF) IROM(0-0xFFF8) CLOCK(35000000) MODP2</Cpu>
+          <Cpu>IRAM(0-0xFF) XRAM(0-0x3FF) IROM(0-0x7FFF) CLOCK(45000000) MODP2</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile>"LIB\STARTUP.A51" ("Standard 8051 Startup Code")</StartupFile>
           <FlashDriverDll></FlashDriverDll>
-          <DeviceId>63032</DeviceId>
-          <RegisterFile>STC8.H</RegisterFile>
+          <DeviceId>61704</DeviceId>
+          <RegisterFile>STC89C5xRC.H</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -69,7 +69,7 @@
           <BeforeMake>
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>.\version.exe</UserProg1Name>
+            <UserProg1Name>version.exe</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -79,7 +79,7 @@
           <AfterMake>
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>.\backup.exe</UserProg1Name>
+            <UserProg1Name>backup.exe</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -110,7 +110,7 @@
           <SimDllName>S8051.DLL</SimDllName>
           <SimDllArguments></SimDllArguments>
           <SimDlgDll>DP51.DLL</SimDlgDll>
-          <SimDlgDllArguments>-pDR8051</SimDlgDllArguments>
+          <SimDlgDllArguments>-p51</SimDlgDllArguments>
           <TargetDllName>S8051.DLL</TargetDllName>
           <TargetDllArguments></TargetDllArguments>
           <TargetDlgDll>TP51.DLL</TargetDlgDll>
@@ -125,7 +125,7 @@
             <Oh166RecLen>16</Oh166RecLen>
           </OPTHX>
           <Simulator>
-            <UseSimulator>1</UseSimulator>
+            <UseSimulator>0</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -137,7 +137,7 @@
             <RestoreSysVw>1</RestoreSysVw>
           </Simulator>
           <Target>
-            <UseTarget>0</UseTarget>
+            <UseTarget>1</UseTarget>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>0</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -163,7 +163,7 @@
             <PeripheralDll></PeripheralDll>
             <PeripheralDllArguments></PeripheralDllArguments>
             <InitializationFile></InitializationFile>
-            <Driver></Driver>
+            <Driver>BIN\VDM51.DLL</Driver>
           </TargetDlls>
         </DebugOption>
         <Utilities>
@@ -177,7 +177,7 @@
           </Flash1>
           <bUseTDR>0</bUseTDR>
           <Flash2></Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -186,7 +186,7 @@
         </Utilities>
         <Target51>
           <Target51Misc>
-            <MemoryModel>2</MemoryModel>
+            <MemoryModel>0</MemoryModel>
             <RTOS>0</RTOS>
             <RomSize>2</RomSize>
             <DataHold>0</DataHold>
@@ -273,7 +273,7 @@
               <IRO>
                 <Type>1</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0xfff9</Size>
+                <Size>0x8000</Size>
               </IRO>
               <IRA>
                 <Type>0</Type>
@@ -283,7 +283,7 @@
               <XRA>
                 <Type>0</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x800</Size>
+                <Size>0x400</Size>
               </XRA>
               <XRA512>
                 <Type>0</Type>
@@ -324,7 +324,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <IncludePath>.\src</IncludePath>
             </VariousControls>
           </C51>
           <Ax51>
@@ -374,37 +374,27 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>main</GroupName>
+          <GroupName>app</GroupName>
           <Files>
-            <File>
-              <FileName>china_nonli.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\china_nonli.c</FilePath>
-            </File>
             <File>
               <FileName>common.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\common.c</FilePath>
             </File>
             <File>
-              <FileName>drv_18b20.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\drv_18b20.c</FilePath>
+              <FilePath>.\src\main.c</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>driver</GroupName>
+          <Files>
             <File>
-              <FileName>drv_1302.c</FileName>
+              <FileName>drv_led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\drv_1302.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_3231.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\drv_3231.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_cfg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\drv_cfg.c</FilePath>
+              <FilePath>.\src\drv_led.c</FilePath>
             </File>
             <File>
               <FileName>drv_key.c</FileName>
@@ -412,9 +402,9 @@
               <FilePath>.\src\drv_key.c</FilePath>
             </File>
             <File>
-              <FileName>drv_led.c</FileName>
+              <FileName>drv_3231.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\drv_led.c</FilePath>
+              <FilePath>.\src\drv_3231.c</FilePath>
             </File>
             <File>
               <FileName>gpio_i2c.c</FileName>
@@ -422,9 +412,19 @@
               <FilePath>.\src\gpio_i2c.c</FilePath>
             </File>
             <File>
-              <FileName>main.c</FileName>
+              <FileName>drv_18b20.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\main.c</FilePath>
+              <FilePath>.\src\drv_18b20.c</FilePath>
+            </File>
+            <File>
+              <FileName>china_nonli.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\china_nonli.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_cfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\drv_cfg.c</FilePath>
             </File>
           </Files>
         </Group>
